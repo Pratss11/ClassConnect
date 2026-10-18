@@ -8,7 +8,9 @@ const mysql = require("mysql2/promise");
 // Use Firebase Admin's modular API.
 const { initializeApp, cert, getApps } = require("firebase-admin/app");
 const { getAuth } = require("firebase-admin/auth");
-const serviceAccount = require("./serviceAccountKey.json");
+const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
+  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+  : require("./serviceAccountKey.json");
 
 const EXPECTED_PROJECT_ID = "classconnect-42a51";
 
