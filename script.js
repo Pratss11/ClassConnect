@@ -1,5 +1,5 @@
 
-const API_URL = "http://localhost:3000/api/assignments";
+const API_URL = "https://classconnect-uw4e.onrender.com/api/assignments";
 
 const form = document.getElementById("assignment-form");
 const titleInput = document.getElementById("assignment-title");
