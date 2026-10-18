@@ -1,0 +1,10 @@
+# Secrets
+.env
+server/.env
+
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Local configuration
+.DS_Store

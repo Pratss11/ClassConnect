@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f2ff">
+  <title>ClassConnect | Student Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <a href="#" class="brand">
+        <span class="brand-icon">✦</span>
+        <span>Class<span class="brand-light">Connect</span></span>
+      </a>
+
+      <div class="sidebar-label">WORKSPACE</div>
+
+      <nav class="side-nav" aria-label="Main navigation">
+        <a href="#dashboard" class="nav-link active">
+          <span class="nav-icon">▦</span>
+          Dashboard
+        </a>
+        <a href="#assignment-section" class="nav-link">
+          <span class="nav-icon">▤</span>
+          Assignments
+        </a>
+        <a href="#study-materials" class="nav-link">
+          <span class="nav-icon">▧</span>
+          Study materials
+        </a>
+        <a href="#study-planner" class="nav-link">
+          <span class="nav-icon">◷</span>
+          Study planner
+        </a>
+        <a href="#announcements" class="nav-link">
+          <span class="nav-icon">♧</span>
+          Announcements
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-mini-card">
+          <span class="mini-card-icon">✧</span>
+          <h3>Keep learning.</h3>
+          <p>Small steps every day lead to big results.</p>
+        </div>
+
+        <div class="profile">
+          <div class="profile-avatar">AI</div>
+          <div class="profile-info">
+            <strong>TE AIML</strong>
+            <span>Student workspace</span>
+          </div>
+          <span class="profile-dot"></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="dashboard">
+
+      <!-- TOP BAR -->
+      <header class="topbar">
+        <div class="breadcrumb">
+          <span>Workspace</span>
+          <span class="breadcrumb-separator">/</span>
+          <strong>Dashboard</strong>
+        </div>
+
+        <div class="topbar-right">
+          <span class="live-indicator"></span>
+          <span class="topbar-status">Your study space</span>
+          <div class="topbar-avatar">AI</div>
+        </div>
+      </header>
+
+      <!-- HERO -->
+      <section class="hero-panel">
+        <div class="hero-content">
+          <span class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            YOUR PERSONAL CLASSROOM
+          </span>
+
+          <h1>Make room for<br><span>great ideas.</span></h1>
+
+          <p>
+            Your assignments, study resources and class updates —
+            all in one calm, organized space.
+          </p>
+
+          <a href="#assignment-section" class="hero-button">
+            Explore your workspace <span>↗</span>
+          </a>
+        </div>
+
+        <div class="hero-art" aria-hidden="true">
+          <div class="hero-orbit orbit-one"></div>
+          <div class="hero-orbit orbit-two"></div>
+          <div class="hero-orbit orbit-three"></div>
+          <div class="hero-glass-icon">✦</div>
+          <div class="floating-chip chip-top">✧ Stay curious</div>
+          <div class="floating-chip chip-bottom">◎ Keep growing</div>
+        </div>
+
+        <div class="hero-decoration"></div>
+      </section>
+
+      <!-- STATS -->
+      <section class="stats-grid" aria-label="Assignment statistics">
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="stat-icon icon-purple">▤</span>
+            <span class="stat-caption">ALL TASKS</span>
+          </div>
+          <div class="stat-number" id="total-count">0</div>
+          <p>Total assignments</p>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="stat-icon icon-orange">◷</span>
+            <span class="stat-caption">IN PROGRESS</span>
+          </div>
+          <div class="stat-number" id="pending-count">0</div>
+          <p>Pending assignments</p>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="stat-icon icon-green">✓</span>
+            <span class="stat-caption">FINISHED</span>
+          </div>
+          <div class="stat-number" id="completed-count">0</div>
+          <p>Completed assignments</p>
+        </article>
+      </section>
+
+      <!-- ASSIGNMENT MANAGER -->
+      <section class="content-panel" id="assignment-section">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">STAY ORGANIZED</span>
+            <h2>Assignment manager</h2>
+            <p>Keep track of your work without the stress.</p>
+          </div>
+
+          <span class="section-badge">
+            <span class="eyebrow-dot"></span>
+            TE AIML
+          </span>
+        </div>
+
+        <div class="assignment-layout">
+
+          <!-- FORM -->
+          <section class="form-panel">
+            <div class="form-heading">
+              <div class="form-heading-icon">＋</div>
+              <div>
+                <h3>New assignment</h3>
+                <p>Add something to your to-do list.</p>
+              </div>
+            </div>
+
+            <form id="assignment-form">
+              <label for="assignment-title">Assignment title</label>
+              <input
+                id="assignment-title"
+                name="title"
+                type="text"
+                maxlength="150"
+                placeholder="e.g. Machine Learning Practical"
+                required
+              >
+
+              <label for="assignment-subject">Subject</label>
+              <input
+                id="assignment-subject"
+                name="subject"
+                type="text"
+                maxlength="100"
+                placeholder="e.g. Artificial Intelligence"
+                required
+              >
+
+              <label for="assignment-description">
+                Description <span class="optional-label">OPTIONAL</span>
+              </label>
+              <textarea
+                id="assignment-description"
+                name="description"
+                rows="3"
+                maxlength="20000"
+                placeholder="Add instructions or notes..."
+              ></textarea>
+
+              <label for="assignment-deadline">Due date</label>
+              <input
+                id="assignment-deadline"
+                name="deadline"
+                type="date"
+                required
+              >
+
+              <button type="submit" class="primary-button" id="add-assignment-button">
+                <span>＋</span> Add assignment
+              </button>
+
+              <p class="form-footnote">
+                ✦ Your assignments are saved to your database.
+              </p>
+            </form>
+          </section>
+
+          <!-- ASSIGNMENT LIST -->
+          <section class="list-panel">
+            <div class="list-heading">
+              <div>
+                <h3>Your assignments</h3>
+                <p>One task at a time. You've got this.</p>
+              </div>
+              <span class="task-count" id="visible-count">0 tasks</span>
+            </div>
+
+            <div class="search-box">
+              <span aria-hidden="true">⌕</span>
+              <input
+                id="assignment-search"
+                type="search"
+                placeholder="Search assignments..."
+                aria-label="Search assignments"
+              >
+            </div>
+
+            <div class="filter-tabs" aria-label="Filter assignments">
+              <button type="button" class="filter-button active" data-filter="All">
+                All
+              </button>
+              <button type="button" class="filter-button" data-filter="Pending">
+                Pending
+              </button>
+              <button type="button" class="filter-button" data-filter="Completed">
+                Completed
+              </button>
+            </div>
+
+            <div id="assignment-list" aria-live="polite">
+              <div class="empty-state">
+                <div class="empty-state-icon">✧</div>
+                <h3>Loading your workspace</h3>
+                <p>Your assignments will appear here.</p>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </section>
+
+      <!-- QUICK ACCESS -->
+      <section class="section-heading quick-heading">
+        <div>
+          <span class="section-kicker">YOUR SPACE</span>
+          <h2>More for your studies</h2>
+          <p>Everything you need to make progress.</p>
+        </div>
+      </section>
+
+      <section class="quick-grid">
+
+        <article class="quick-card" id="study-materials">
+          <div class="quick-icon quick-purple">▧</div>
+          <span class="quick-tag">LEARN</span>
+          <h3>Study materials</h3>
+          <p>Keep your notes and learning resources organized.</p>
+          <button
+            type="button"
+            class="text-button"
+            onclick="showMessage('Study Materials will be added in the next development step.')"
+          >
+            Explore resources <span>↗</span>
+          </button>
+        </article>
+
+        <article class="quick-card" id="study-planner">
+          <div class="quick-icon quick-blue">◷</div>
+          <span class="quick-tag">PLAN</span>
+          <h3>Study planner</h3>
+          <p>Make time for revision, practicals and exams.</p>
+          <button
+            type="button"
+            class="text-button"
+            onclick="showMessage('Study Planner will be added in the next development step.')"
+          >
+            Open planner <span>↗</span>
+          </button>
+        </article>
+
+        <article class="quick-card" id="announcements">
+          <div class="quick-icon quick-pink">♧</div>
+          <span class="quick-tag">CONNECT</span>
+          <h3>Class announcements</h3>
+          <p>Keep important class notices in one place.</p>
+          <button
+            type="button"
+            class="text-button"
+            onclick="showMessage('Announcements will be added in the next development step.')"
+          >
+            View updates <span>↗</span>
+          </button>
+        </article>
+
+      </section>
+
+      <footer class="footer">
+        <span class="footer-brand">✦ ClassConnect</span>
+        <span>Made for learners, built for progress.</span>
+        <span>TE AIML · Student Portal</span>
+      </footer>
+
+    </main>
+  </div>
+</body>
+</html>
