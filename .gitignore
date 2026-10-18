@@ -9,3 +9,4 @@ server/node_modules/
 # Local configuration
 .DS_Store
 server/serviceAccountKey.json
+server/ca.pem

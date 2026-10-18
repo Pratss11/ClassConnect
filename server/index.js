@@ -43,8 +43,14 @@ const pool = mysql.createPool({
   port: Number(process.env.DB_PORT) || 3306,
 
   ssl: process.env.DB_HOST
-    ? { rejectUnauthorized: true }
-    : undefined,
+  ? {
+      ca: require("fs").readFileSync(
+        process.env.DB_CA_PATH || "./ca.pem",
+        "utf8"
+      ),
+      rejectUnauthorized: true,
+    }
+  : undefined,
 
   waitForConnections: true,
   connectionLimit: 10,
