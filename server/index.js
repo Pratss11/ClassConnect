@@ -44,10 +44,9 @@ const pool = mysql.createPool({
 
   ssl: process.env.DB_HOST
   ? {
-      ca: require("fs").readFileSync(
-        process.env.DB_CA_PATH || "./ca.pem",
-        "utf8"
-      ),
+      ca: process.env.DB_CA_CERT
+        ? process.env.DB_CA_CERT.replace(/\\n/g, "\n")
+        : require("fs").readFileSync("./ca.pem", "utf8"),
       rejectUnauthorized: true,
     }
   : undefined,
