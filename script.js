@@ -23,55 +23,48 @@ let activeFilter = "All";
 let searchTerm = "";
 let isSaving = false;
 
-// API helper
 async function apiRequest(url, options = {}) {
   const response = await fetch(url, options);
+
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.error || "Something went wrong.");
+    throw new Error(data.error || `Request failed (${response.status})`);
   }
 
   return data;
 }
 
-// Safe HTML elements
 function createElement(tag, className = "", text = "") {
   const element = document.createElement(tag);
 
-  if (className) {
-    element.className = className;
-  }
+  if (className) element.className = className;
 
   element.textContent = text;
   return element;
 }
 
-// Empty state
 function showEmptyState(title, message) {
   const empty = createElement("div", "empty-state");
-  const icon = createElement("div", "empty-state-icon", "✧");
-  const heading = createElement("h3", "", title);
-  const paragraph = createElement("p", "", message);
+  empty.append(
+    createElement("div", "empty-state-icon", "✧"),
+    createElement("h3", "", title),
+    createElement("p", "", message)
+  );
 
-  empty.append(icon, heading, paragraph);
   assignmentList.replaceChildren(empty);
 }
 
-// Dashboard statistics
 function updateStatistics() {
   const completed = assignments.filter(
-    (item) => item.status === "Completed"
+    item => item.status === "Completed"
   ).length;
 
-  const pending = assignments.length - completed;
-
   totalCount.textContent = assignments.length;
-  pendingCount.textContent = pending;
   completedCount.textContent = completed;
+  pendingCount.textContent = assignments.length - completed;
 }
 
-// Format YYYY-MM-DD without timezone shifts
 function formatDeadline(deadline) {
   if (!deadline) return "Not set";
 
@@ -89,33 +82,72 @@ function formatDeadline(deadline) {
   return date.toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
-    year: "numeric",
+    year: "numeric"
   });
 }
 
-// Search and filter
 function getFilteredAssignments() {
-  return assignments.filter((item) => {
+  return assignments.filter(item => {
     const matchesStatus =
       activeFilter === "All" || item.status === activeFilter;
 
-    const searchableText = [
+    const text = [
       item.title,
       item.subject,
-      item.description || "",
-    ]
-      .join(" ")
-      .toLowerCase();
+      item.description || ""
+    ].join(" ").toLowerCase();
 
-    const matchesSearch = searchableText.includes(
-      searchTerm.toLowerCase()
-    );
-
-    return matchesStatus && matchesSearch;
+    return matchesStatus && text.includes(searchTerm.toLowerCase());
   });
 }
 
-// Render assignments
+async function changeStatus(item, newStatus, button) {
+  button.disabled = true;
+  const originalText = button.textContent;
+  button.textContent = "Updating...";
+
+  try {
+    // Endpoint must match the backend route.
+    await apiRequest(`${API_URL}/${item.id}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus })
+    });
+
+    await loadAssignments();
+  } catch (error) {
+    console.error("Status update failed:", error);
+    alert(
+      "Status update nahi hua.\n" +
+      error.message +
+      "\n\nBackend API route check karna hoga."
+    );
+
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
+async function deleteAssignment(item, button) {
+  if (!confirm(`Delete "${item.title}"?`)) return;
+
+  button.disabled = true;
+  button.textContent = "Deleting...";
+
+  try {
+    await apiRequest(`${API_URL}/${item.id}`, {
+      method: "DELETE"
+    });
+
+    await loadAssignments();
+  } catch (error) {
+    console.error("Delete failed:", error);
+    alert("Assignment delete nahi hua: " + error.message);
+    button.disabled = false;
+    button.textContent = "Delete";
+  }
+}
+
 function renderAssignments() {
   updateStatistics();
 
@@ -142,34 +174,16 @@ function renderAssignments() {
 
   assignmentList.replaceChildren();
 
-  filtered.forEach((item) => {
+  filtered.forEach(item => {
     const card = createElement("article", "assignment-item");
     const isCompleted = item.status === "Completed";
 
-    if (isCompleted) {
-      card.classList.add("completed");
-    }
+    if (isCompleted) card.classList.add("completed");
 
-    const title = createElement("h4", "", item.title);
-    const subject = createElement(
-      "p",
-      "",
-      `Subject: ${item.subject}`
+    card.append(
+      createElement("h4", "", item.title),
+      createElement("p", "", `Subject: ${item.subject}`)
     );
-
-    const deadline = createElement(
-      "p",
-      "",
-      `Due date: ${formatDeadline(item.deadline)}`
-    );
-
-    const status = createElement(
-      "p",
-      "",
-      `Status: ${item.status}`
-    );
-
-    card.append(title, subject);
 
     if (item.description) {
       card.append(
@@ -177,9 +191,11 @@ function renderAssignments() {
       );
     }
 
-    card.append(deadline, status);
+    card.append(
+      createElement("p", "", `Due date: ${formatDeadline(item.deadline)}`),
+      createElement("p", "", `Status: ${item.status}`)
+    );
 
-    // Mark Complete / Mark Pending
     const statusButton = createElement(
       "button",
       "",
@@ -188,48 +204,19 @@ function renderAssignments() {
 
     statusButton.type = "button";
 
-    statusButton.addEventListener("click", async () => {
-      statusButton.disabled = true;
-
-      try {
-        await apiRequest(`${API_URL}/${item.id}/status`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            status: isCompleted ? "Pending" : "Completed",
-          }),
-        });
-
-        await loadAssignments();
-      } catch (error) {
-        console.error("Status update error:", error);
-        alert(error.message || "Could not update assignment.");
-        statusButton.disabled = false;
-      }
+    statusButton.addEventListener("click", () => {
+      changeStatus(
+        item,
+        isCompleted ? "Pending" : "Completed",
+        statusButton
+      );
     });
 
-    // Delete assignment
     const deleteButton = createElement("button", "", "Delete");
     deleteButton.type = "button";
 
-    deleteButton.addEventListener("click", async () => {
-      if (!confirm(`Delete "${item.title}"?`)) return;
-
-      deleteButton.disabled = true;
-
-      try {
-        await apiRequest(`${API_URL}/${item.id}`, {
-          method: "DELETE",
-        });
-
-        await loadAssignments();
-      } catch (error) {
-        console.error("Delete error:", error);
-        alert(error.message || "Could not delete assignment.");
-        deleteButton.disabled = false;
-      }
+    deleteButton.addEventListener("click", () => {
+      deleteAssignment(item, deleteButton);
     });
 
     card.append(statusButton, deleteButton);
@@ -237,13 +224,7 @@ function renderAssignments() {
   });
 }
 
-// Load from MySQL through backend
 async function loadAssignments() {
-  showEmptyState(
-    "Loading your workspace",
-    "Fetching your assignments..."
-  );
-
   try {
     const data = await apiRequest(API_URL);
 
@@ -254,17 +235,22 @@ async function loadAssignments() {
     assignments = data;
     renderAssignments();
   } catch (error) {
-    console.error("Load error:", error);
+    console.error("Loading assignments failed:", error);
 
     showEmptyState(
       "Couldn't load assignments",
-      "Check that your backend and MySQL database are running."
+      "Start the Node.js backend and check the MySQL connection. " +
+      error.message
     );
+
+    totalCount.textContent = "0";
+    pendingCount.textContent = "0";
+    completedCount.textContent = "0";
+    visibleCount.textContent = "0 tasks";
   }
 }
 
-// Add assignment
-form.addEventListener("submit", async (event) => {
+form.addEventListener("submit", async event => {
   event.preventDefault();
 
   if (isSaving) return;
@@ -281,20 +267,18 @@ form.addEventListener("submit", async (event) => {
 
   isSaving = true;
   addButton.disabled = true;
-  addButton.textContent = "Saving assignment...";
+  addButton.textContent = "Saving...";
 
   try {
     await apiRequest(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title,
         subject,
         description: description || null,
-        deadline: deadline || null,
-      }),
+        deadline: deadline || null
+      })
     });
 
     form.reset();
@@ -303,22 +287,14 @@ form.addEventListener("submit", async (event) => {
     searchTerm = "";
     searchInput.value = "";
 
-    filterButtons.forEach((button) => {
-      button.classList.toggle(
-        "active",
-        button.dataset.filter === "All"
-      );
+    filterButtons.forEach(button => {
+      button.classList.toggle("active", button.dataset.filter === "All");
     });
 
     await loadAssignments();
-
-    document.getElementById("assignment-section").scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
   } catch (error) {
-    console.error("Save error:", error);
-    alert(error.message || "Could not save assignment.");
+    console.error("Adding assignment failed:", error);
+    alert("Assignment save nahi hua: " + error.message);
   } finally {
     isSaving = false;
     addButton.disabled = false;
@@ -326,43 +302,31 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
-// Search
 searchInput.addEventListener("input", () => {
   searchTerm = searchInput.value.trim();
   renderAssignments();
 });
 
-// Filters
-filterButtons.forEach((button) => {
+filterButtons.forEach(button => {
   button.addEventListener("click", () => {
     activeFilter = button.dataset.filter;
 
-    filterButtons.forEach((filterButton) => {
-      filterButton.classList.toggle(
-        "active",
-        filterButton === button
-      );
+    filterButtons.forEach(filterButton => {
+      filterButton.classList.toggle("active", filterButton === button);
     });
 
     renderAssignments();
   });
 });
 
-// Sidebar navigation active state
-document.querySelectorAll(".nav-link").forEach((link) => {
+document.querySelectorAll(".nav-link").forEach(link => {
   link.addEventListener("click", () => {
-    document.querySelectorAll(".nav-link").forEach((item) => {
+    document.querySelectorAll(".nav-link").forEach(item => {
       item.classList.toggle("active", item === link);
     });
   });
 });
 
-// Placeholder for sections not implemented yet
-function showMessage(message) {
-  alert(message);
-}
-
-// Start application
 loadAssignments();
 
 console.log("ClassConnect dashboard initialized.");
