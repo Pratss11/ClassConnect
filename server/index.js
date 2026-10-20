@@ -6,11 +6,19 @@ const mysql = require("mysql2/promise");
 const admin = require("firebase-admin");
 const createClassroomOAuthRouter = require("./classroom-oauth");
 
-// =====================================================
+//// =====================================================
 // 1. FIREBASE ADMIN INITIALIZATION
 // =====================================================
 
 const FIREBASE_PROJECT_ID = "classconnect-42a51";
+
+const {
+  initializeApp,
+  cert,
+  getApps,
+} = require("firebase-admin/app");
+
+const { getAuth } = require("firebase-admin/auth");
 
 let serviceAccount;
 
@@ -23,7 +31,10 @@ try {
     serviceAccount = require("./serviceAccountKey.json");
   }
 } catch (error) {
-  console.error("Failed to load Firebase service account:", error.message);
+  console.error(
+    "Failed to load Firebase service account:",
+    error.message
+  );
   throw error;
 }
 
@@ -33,16 +44,18 @@ if (serviceAccount.project_id !== FIREBASE_PROJECT_ID) {
   );
 }
 
-if (!admin.apps || admin.apps.length === 0) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-}
+const firebaseApp =
+  getApps().length === 0
+    ? initializeApp({
+        credential: cert(serviceAccount),
+      })
+    : getApps()[0];
+
+const firebaseAuth = getAuth(firebaseApp);
 
 // =====================================================
 // 2. EXPRESS APPLICATION
 // =====================================================
-
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
