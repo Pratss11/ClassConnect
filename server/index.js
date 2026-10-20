@@ -33,7 +33,7 @@ if (serviceAccount.project_id !== FIREBASE_PROJECT_ID) {
   );
 }
 
-if (admin.apps.length === 0) {
+if (!admin.apps || admin.apps.length === 0) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
