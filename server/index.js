@@ -1,87 +1,155 @@
-
 require("dotenv").config();
-
 
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
+const admin = require("firebase-admin");
 const createClassroomOAuthRouter = require("./classroom-oauth");
 
-// Use Firebase Admin's modular API.
-const { initializeApp, cert, getApps } = require("firebase-admin/app");
-const { getAuth } = require("firebase-admin/auth");
-const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
-  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
-  : require("./serviceAccountKey.json");
+// =====================================================
+// 1. FIREBASE ADMIN INITIALIZATION
+// =====================================================
 
-const EXPECTED_PROJECT_ID = "classconnect-42a51";
+const FIREBASE_PROJECT_ID = "classconnect-42a51";
 
-if (serviceAccount.project_id !== EXPECTED_PROJECT_ID) {
+let serviceAccount;
+
+try {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    serviceAccount = JSON.parse(
+      process.env.FIREBASE_SERVICE_ACCOUNT
+    );
+  } else {
+    serviceAccount = require("./serviceAccountKey.json");
+  }
+} catch (error) {
+  console.error("Failed to load Firebase service account:", error.message);
+  throw error;
+}
+
+if (serviceAccount.project_id !== FIREBASE_PROJECT_ID) {
   throw new Error(
-    `Wrong Firebase project. Expected ${EXPECTED_PROJECT_ID}.`
+    `Firebase project mismatch. Expected ${FIREBASE_PROJECT_ID}.`
   );
 }
 
-// Initialize Firebase Admin once.
-if (getApps().length === 0) {
-  initializeApp({
-    credential: cert(serviceAccount),
+if (admin.apps.length === 0) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
   });
 }
 
-const firebaseAuth = getAuth();
+// =====================================================
+// 2. EXPRESS APPLICATION
+// =====================================================
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
 app.use(cors());
-app.use(express.json({ limit: "50kb" }));
 
-// MySQL connection.
+app.use(
+  express.json({
+    limit: "50kb",
+  })
+);
 
-const pool = mysql.createPool({
+// =====================================================
+// 3. MYSQL DATABASE CONNECTION
+// =====================================================
+
+const dbConfig = {
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "classconnect_app",
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME || "classconnect",
- port: Number(process.env.DB_PORT) || 3306,
-
-  ssl: process.env.DB_HOST
-  ? {
-      ca: process.env.DB_CA_CERT.replace(/\\n/g, "\n"),
-      rejectUnauthorized: true,
-    }
-  : undefined,
+  port: Number(process.env.DB_PORT) || 3306,
 
   waitForConnections: true,
   connectionLimit: 10,
   dateStrings: true,
-});
+};
 
+if (process.env.DB_HOST) {
+  if (!process.env.DB_CA_CERT) {
+    throw new Error(
+      "DB_CA_CERT is required when using the remote MySQL database."
+    );
+  }
 
-// Home route.
+  dbConfig.ssl = {
+    ca: process.env.DB_CA_CERT.replace(/\\n/g, "\n"),
+    rejectUnauthorized: true,
+  };
+}
+
+const pool = mysql.createPool(dbConfig);
+
+// =====================================================
+// 4. FIREBASE AUTHENTICATION MIDDLEWARE
+// =====================================================
+
+async function requireFirebaseUser(req, res, next) {
+  const authorization = req.headers.authorization || "";
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+
+  if (!match) {
+    return res.status(401).json({
+      error: "Sign in required. Missing Firebase authentication token.",
+    });
+  }
+
+  try {
+    const decoded = await admin
+      .auth()
+      .verifyIdToken(match[1]);
+
+    req.firebaseUser = decoded;
+
+    return next();
+  } catch (error) {
+    console.warn(
+      "Firebase token verification failed:",
+      error.code || error.message
+    );
+
+    return res.status(401).json({
+      error: "Invalid or expired login. Please sign in again.",
+    });
+  }
+}
+
+// =====================================================
+// 5. HOME ROUTE
+// =====================================================
+
 app.get("/", (req, res) => {
   res.json({
     message: "ClassConnect backend is running!",
+    class: "TE AIML",
   });
 });
 
-// Database health check.
+// =====================================================
+// 6. DATABASE HEALTH CHECK
+// =====================================================
+
 app.get("/api/health", async (req, res) => {
   let connection;
 
   try {
     connection = await pool.getConnection();
+
     await connection.ping();
 
-    res.json({
+    return res.json({
       status: "OK",
       database: "connected",
     });
   } catch (error) {
-    console.error("Health check failed:", error);
+    console.error("Database health check failed:", error.message);
 
-    res.status(500).json({
+    return res.status(500).json({
       status: "ERROR",
       database: "disconnected",
     });
@@ -90,64 +158,71 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-// Verify Firebase ID tokens.
-async function requireFirebaseUser(req, res, next) {
-  const authorization = req.headers.authorization || "";
-  const match = authorization.match(/^Bearer\s+(.+)$/i);
+// =====================================================
+// 7. GOOGLE CLASSROOM ROUTER
+// =====================================================
 
-  if (!match) {
-    return res.status(401).json({
-      error: "Please sign in to manage assignments.",
-    });
-  }
-
-  try {
-    req.firebaseUser = await firebaseAuth.verifyIdToken(match[1]);
-    return next();
-  } catch (error) {
-    console.error(
-      "Firebase token verification failed:",
-      error.code || error.message
-    );
-
-    return res.status(401).json({
-      error: "Invalid or expired session. Please sign in again.",
-    });
-  }
-}
 const classroomOAuthRouter = createClassroomOAuthRouter({
   pool,
   requireFirebaseUser,
 });
 
-// All assignment routes require Firebase authentication.
-app.use("/api/assignments", requireFirebaseUser);
 app.use("/api/classroom", classroomOAuthRouter);
-// GET: current user's assignments only.
+
+console.log("Google Classroom routes registered");
+
+// =====================================================
+// 8. ASSIGNMENT AUTHENTICATION
+// =====================================================
+
+app.use("/api/assignments", requireFirebaseUser);
+
+// =====================================================
+// 9. GET ALL ASSIGNMENTS
+// GET /api/assignments
+// =====================================================
+
 app.get("/api/assignments", async (req, res) => {
   try {
     const [rows] = await pool.execute(
-      `SELECT id, title, subject, description, deadline, status, created_at
+      `SELECT
+         id,
+         title,
+         subject,
+         description,
+         deadline,
+         status,
+         created_at
        FROM assignments
        WHERE user_uid = ?
        ORDER BY created_at DESC, id DESC`,
       [req.firebaseUser.uid]
     );
 
-    res.json(rows);
+    return res.json(rows);
   } catch (error) {
-    console.error("Fetch assignments failed:", error.message);
+    console.error("Fetch assignments error:", error.message);
 
-    res.status(500).json({
-      error: "Could not load assignments. Check the database schema.",
+    return res.status(500).json({
+      error:
+        "Could not fetch assignments. Check the database configuration and assignments table.",
     });
   }
 });
 
-// POST: create assignment for the signed-in user.
+// =====================================================
+// 10. CREATE ASSIGNMENT
+// POST /api/assignments
+// =====================================================
+
 app.post("/api/assignments", async (req, res) => {
   try {
-    const { title, subject, description, deadline } = req.body;
+    const {
+      title,
+      subject,
+      description,
+      deadline,
+    } = req.body;
 
     if (
       typeof title !== "string" ||
@@ -162,24 +237,33 @@ app.post("/api/assignments", async (req, res) => {
 
     const cleanTitle = title.trim();
     const cleanSubject = subject.trim();
-    const cleanDescription =
-      typeof description === "string" ? description.trim() : "";
 
-    if (cleanTitle.length > 150 || cleanSubject.length > 100) {
+    if (
+      cleanTitle.length > 150 ||
+      cleanSubject.length > 100
+    ) {
       return res.status(400).json({
         error: "Title or subject is too long.",
       });
     }
 
-    if (cleanDescription.length > 20000) {
+    const cleanDescription =
+      typeof description === "string"
+        ? description.trim()
+        : null;
+
+    if (
+      cleanDescription &&
+      cleanDescription.length > 20000
+    ) {
       return res.status(400).json({
-        error: "Description is too long.",
+        error: "Assignment description is too long.",
       });
     }
 
     let cleanDeadline = null;
 
-    if (deadline !== undefined && deadline !== null && deadline !== "") {
+    if (deadline) {
       if (
         typeof deadline !== "string" ||
         !/^\d{4}-\d{2}-\d{2}$/.test(deadline)
@@ -205,31 +289,35 @@ app.post("/api/assignments", async (req, res) => {
 
     const [result] = await pool.execute(
       `INSERT INTO assignments
-       (user_uid, title, subject, description, deadline)
+         (user_uid, title, subject, description, deadline)
        VALUES (?, ?, ?, ?, ?)`,
       [
         req.firebaseUser.uid,
         cleanTitle,
         cleanSubject,
-        cleanDescription || null,
+        cleanDescription,
         cleanDeadline,
       ]
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Assignment created successfully.",
       id: result.insertId,
     });
   } catch (error) {
-    console.error("Create assignment failed:", error.message);
+    console.error("Create assignment error:", error.message);
 
-    res.status(500).json({
-      error: "Could not save the assignment.",
+    return res.status(500).json({
+      error: "Could not create assignment.",
     });
   }
 });
 
-// PATCH: update status only for the assignment owner.
+// =====================================================
+// 11. UPDATE ASSIGNMENT STATUS
+// PATCH /api/assignments/:id/status
+// =====================================================
+
 app.patch("/api/assignments/:id/status", async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -256,7 +344,8 @@ app.patch("/api/assignments/:id/status", async (req, res) => {
 
     if (result.affectedRows === 0) {
       const [rows] = await pool.execute(
-        `SELECT id FROM assignments
+        `SELECT id
+         FROM assignments
          WHERE id = ? AND user_uid = ?`,
         [id, req.firebaseUser.uid]
       );
@@ -268,19 +357,23 @@ app.patch("/api/assignments/:id/status", async (req, res) => {
       }
     }
 
-    res.json({
+    return res.json({
       message: `Assignment marked as ${status}.`,
     });
   } catch (error) {
-    console.error("Update status failed:", error.message);
+    console.error("Update assignment status error:", error.message);
 
-    res.status(500).json({
+    return res.status(500).json({
       error: "Could not update assignment status.",
     });
   }
 });
 
-// Compatibility endpoint for older frontend code.
+// =====================================================
+// 12. LEGACY COMPLETION ROUTE
+// PATCH /api/assignments/:id/complete
+// =====================================================
+
 app.patch("/api/assignments/:id/complete", async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -300,7 +393,8 @@ app.patch("/api/assignments/:id/complete", async (req, res) => {
 
     if (result.affectedRows === 0) {
       const [rows] = await pool.execute(
-        `SELECT id FROM assignments
+        `SELECT id
+         FROM assignments
          WHERE id = ? AND user_uid = ?`,
         [id, req.firebaseUser.uid]
       );
@@ -312,19 +406,23 @@ app.patch("/api/assignments/:id/complete", async (req, res) => {
       }
     }
 
-    res.json({
+    return res.json({
       message: "Assignment marked as completed.",
     });
   } catch (error) {
-    console.error("Complete assignment failed:", error.message);
+    console.error("Complete assignment error:", error.message);
 
-    res.status(500).json({
+    return res.status(500).json({
       error: "Could not complete assignment.",
     });
   }
 });
 
-// DELETE: only the owner can delete their assignment.
+// =====================================================
+// 13. DELETE ASSIGNMENT
+// DELETE /api/assignments/:id
+// =====================================================
+
 app.delete("/api/assignments/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -347,47 +445,44 @@ app.delete("/api/assignments/:id", async (req, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       message: "Assignment deleted successfully.",
     });
   } catch (error) {
-    console.error("Delete assignment failed:", error.message);
+    console.error("Delete assignment error:", error.message);
 
-    res.status(500).json({
+    return res.status(500).json({
       error: "Could not delete assignment.",
     });
   }
 });
 
-// Start the backend.
-let server;
+// =====================================================
+// 14. START SERVER
+// =====================================================
 
-if (require.main === module) {
-  server = app.listen(PORT, () => {
-    console.log(`ClassConnect running at http://localhost:${PORT}`);
-  });
-}
+const server = app.listen(PORT, () => {
+  console.log(`ClassConnect server running on port ${PORT}`);
+});
 
-module.exports = { app, pool, firebaseAuth };
+// =====================================================
+// 15. GRACEFUL SHUTDOWN
+// =====================================================
 
 async function shutdown() {
-  if (!server) {
-    await pool.end();
-    return;
-  }
+  console.log("Shutting down ClassConnect server...");
 
   server.close(async () => {
     try {
       await pool.end();
+      console.log("Database connection pool closed.");
+      process.exit(0);
     } catch (error) {
-      console.error("MySQL shutdown error:", error.message);
+      console.error("Shutdown error:", error.message);
+      process.exit(1);
     }
-
-    process.exit(0);
   });
 }
 
-if (require.main === module) {
-  process.on("SIGINT", shutdown);
-  process.on("SIGTERM", shutdown);
-}
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
