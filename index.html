@@ -117,6 +117,7 @@
     }
 
     input::placeholder, textarea::placeholder { color: #939cb5; }
+
     input:focus, textarea:focus, select:focus {
       border-color: rgba(196,181,253,.85);
       box-shadow: 0 0 0 4px rgba(167,139,250,.11);
@@ -278,7 +279,13 @@
     }
 
     .stat { padding: 22px; }
-    .stat-top { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+
+    .stat-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
 
     .stat-symbol, .quick-icon {
       display: grid;
@@ -459,12 +466,14 @@
 
       <div>
         <div class="nav-title">YOUR WORKSPACE</div>
+
         <nav class="nav-links">
           <a class="nav-link active" href="#dashboard">✦ Dashboard</a>
           <a class="nav-link" href="#assignment-section">▤ Assignments</a>
           <a class="nav-link" href="#study-materials">▧ Study materials</a>
           <a class="nav-link" href="#study-planner">◷ Study planner</a>
           <a class="nav-link" href="#announcements">♧ Announcements</a>
+          <a class="nav-link" href="#google-classroom">▣ Google Classroom</a>
         </nav>
       </div>
 
@@ -502,11 +511,13 @@
           <div id="total-count" class="stat-number">0</div>
           <p>Total assignments</p>
         </article>
+
         <article class="stat glass">
           <div class="stat-top"><span class="stat-symbol">◷</span><span class="stat-label">IN PROGRESS</span></div>
           <div id="pending-count" class="stat-number">0</div>
           <p>Pending assignments</p>
         </article>
+
         <article class="stat glass">
           <div class="stat-top"><span class="stat-symbol">✓</span><span class="stat-label">FINISHED</span></div>
           <div id="completed-count" class="stat-number">0</div>
@@ -552,6 +563,7 @@
                 <option value="Completed">Completed</option>
               </select>
             </div>
+
             <div id="assignment-list"></div>
           </div>
         </div>
@@ -563,16 +575,43 @@
           <h3>Study materials</h3>
           <p>Keep your notes and learning resources organized.</p>
         </article>
+
         <article id="study-planner" class="quick-card glass">
           <div class="quick-icon">◷</div>
           <h3>Study planner</h3>
           <p>Plan revision, practicals and exam preparation.</p>
         </article>
+
         <article id="announcements" class="quick-card glass">
           <div class="quick-icon">♧</div>
           <h3>Class announcements</h3>
           <p>Keep important class notices in one place.</p>
         </article>
+      </section>
+
+      <section id="google-classroom" class="section glass">
+        <div class="section-head">
+          <div>
+            <h2>Google Classroom</h2>
+            <p class="muted">Connect your Google account to access your classroom information.</p>
+          </div>
+
+          <span id="classroom-status" class="pill">Checking connection...</span>
+        </div>
+
+        <div>
+          <p id="classroom-message" class="muted" role="status" aria-live="polite">
+            Connect Google Classroom to get started.
+          </p>
+
+          <button id="classroom-connect-button" class="primary" type="button">
+            Connect Google Classroom
+          </button>
+
+          <button id="classroom-disconnect-button" type="button" hidden>
+            Disconnect
+          </button>
+        </div>
       </section>
 
       <footer class="footer">ClassConnect · Made for learners, built for progress.</footer>
@@ -596,7 +635,7 @@
       measurementId: "G-DGLZ9GPQ4Z"
     };
 
-   const API_BASE = "https://classconnect-uw4e.onrender.com/api";
+    const API_BASE = "https://classconnect-uw4e.onrender.com/api";
 
     if (typeof firebase === "undefined") {
       document.getElementById("auth-message").textContent =
@@ -604,7 +643,9 @@
       throw new Error("Firebase SDK unavailable");
     }
 
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
 
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -622,18 +663,24 @@
 
     function setMode(mode) {
       authMode = mode;
+
       $("auth-heading").textContent =
         mode === "signup" ? "Create your account" : "Welcome back";
+
       $("auth-subtitle").textContent =
         mode === "signup"
           ? "Create your ClassConnect student account."
           : "Sign in to continue to your student workspace.";
+
       $("login-button").textContent =
         mode === "signup" ? "Create account" : "Sign in";
+
       $("signup-button").textContent =
         mode === "signup" ? "Back to sign in" : "Create a student account";
+
       $("auth-password").autocomplete =
         mode === "signup" ? "new-password" : "current-password";
+
       authMessage("");
     }
 
@@ -712,6 +759,7 @@
         authMessage("If the account exists, a reset email has been sent.", true);
       } catch (error) {
         console.error("Password reset error:", error);
+
         authMessage(
           error.code === "auth/invalid-email"
             ? "Enter a valid email address."
@@ -733,12 +781,16 @@
       }
     });
 
+    // API helper: sends Firebase login token and displays the real server error.
     async function apiRequest(path, options = {}) {
       const user = auth.currentUser;
 
-      if (!user) throw new Error("Please sign in first.");
+      if (!user) {
+        throw new Error("Please sign in first.");
+      }
 
       const token = await user.getIdToken();
+
       const headers = {
         ...(options.headers || {}),
         Authorization: `Bearer ${token}`
@@ -748,35 +800,148 @@
         headers["Content-Type"] = "application/json";
       }
 
-      const response = await fetch(`${API_BASE}${path}`, {
-        ...options,
-        headers
-      });
+      let response;
 
-      let data = {};
       try {
-        data = await response.json();
-      } catch {}
+        response = await fetch(`${API_BASE}${path}`, {
+          ...options,
+          headers
+        });
+      } catch (error) {
+        throw new Error(
+          "Could not reach the ClassConnect server. Check the Render backend and internet connection."
+        );
+      }
+
+      const responseText = await response.text();
+      let data = {};
+
+      if (responseText) {
+        try {
+          data = JSON.parse(responseText);
+        } catch {
+          data = { message: responseText };
+        }
+      }
 
       if (!response.ok) {
+        const detail = data.error || data.message || data.details;
+
         throw new Error(
-          data.error || `Request failed (${response.status}).`
+          detail
+            ? `${detail} (HTTP ${response.status})`
+            : `Request failed with HTTP ${response.status}.`
         );
       }
 
       return data;
     }
 
+    // GOOGLE CLASSROOM INTEGRATION
+
+    async function checkClassroomStatus() {
+      const status = $("classroom-status");
+      const message = $("classroom-message");
+      const connectButton = $("classroom-connect-button");
+      const disconnectButton = $("classroom-disconnect-button");
+
+      if (!auth.currentUser) {
+        status.textContent = "Sign in required";
+        message.textContent = "Sign in to check your Google Classroom connection.";
+        connectButton.hidden = false;
+        disconnectButton.hidden = true;
+        return;
+      }
+
+      status.textContent = "Checking...";
+      message.textContent = "Checking your Google Classroom connection...";
+      connectButton.disabled = true;
+
+      try {
+        const result = await apiRequest("/classroom/status");
+
+        if (result.connected) {
+          status.textContent = "Connected";
+          message.textContent = "Your Google Classroom account is connected.";
+          connectButton.hidden = true;
+          disconnectButton.hidden = false;
+        } else {
+          status.textContent = "Not connected";
+          message.textContent = "Connect your Google account to get started.";
+          connectButton.hidden = false;
+          disconnectButton.hidden = true;
+        }
+      } catch (error) {
+        status.textContent = "Unavailable";
+        message.textContent = "Could not check Classroom status: " + error.message;
+        connectButton.hidden = false;
+        disconnectButton.hidden = true;
+
+        console.error("Classroom status error:", error);
+      } finally {
+        connectButton.disabled = false;
+      }
+    }
+
+    $("classroom-connect-button").addEventListener("click", async () => {
+      const button = $("classroom-connect-button");
+
+      button.disabled = true;
+      button.textContent = "Connecting...";
+
+      try {
+        const result = await apiRequest("/classroom/connect");
+
+        if (!result.authorizationUrl) {
+          throw new Error("Google authorization URL was not returned by the server.");
+        }
+
+        window.location.href = result.authorizationUrl;
+      } catch (error) {
+        console.error("Classroom connection error:", error);
+        alert("Google Classroom connection failed: " + error.message);
+      } finally {
+        button.disabled = false;
+        button.textContent = "Connect Google Classroom";
+      }
+    });
+
+    $("classroom-disconnect-button").addEventListener("click", async () => {
+      if (!confirm("Disconnect your Google Classroom account?")) {
+        return;
+      }
+
+      const button = $("classroom-disconnect-button");
+      button.disabled = true;
+
+      try {
+        await apiRequest("/classroom/disconnect", {
+          method: "DELETE"
+        });
+
+        await checkClassroomStatus();
+      } catch (error) {
+        console.error("Classroom disconnect error:", error);
+        alert("Google Classroom disconnect failed: " + error.message);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
     function updateStats() {
       $("total-count").textContent = assignments.length;
+
       $("pending-count").textContent =
         assignments.filter(item => item.status === "Pending").length;
+
       $("completed-count").textContent =
         assignments.filter(item => item.status === "Completed").length;
     }
 
     async function loadAssignments() {
-      if (!auth.currentUser || loadingAssignments) return;
+      if (!auth.currentUser || loadingAssignments) {
+        return;
+      }
 
       const generation = authGeneration;
       const uid = auth.currentUser.uid;
@@ -797,24 +962,31 @@
           generation !== authGeneration ||
           !auth.currentUser ||
           auth.currentUser.uid !== uid
-        ) return;
+        ) {
+          return;
+        }
 
         assignments = Array.isArray(rows) ? rows : [];
         renderAssignments();
       } catch (error) {
-        if (generation !== authGeneration) return;
+        if (generation !== authGeneration) {
+          return;
+        }
 
         console.error("Load assignments error:", error);
         assignments = [];
         updateStats();
 
         list.replaceChildren();
+
         const message = document.createElement("div");
         message.className = "empty-state";
         message.textContent = error.message;
         list.appendChild(message);
       } finally {
-        if (generation === authGeneration) loadingAssignments = false;
+        if (generation === authGeneration) {
+          loadingAssignments = false;
+        }
       }
     }
 
@@ -824,6 +996,7 @@
 
       const visible = assignments.filter(item => {
         const filterMatch = filter === "All" || item.status === filter;
+
         const text = [
           item.title || "",
           item.subject || "",
@@ -842,9 +1015,11 @@
       if (!visible.length) {
         const empty = document.createElement("div");
         empty.className = "empty-state";
+
         empty.textContent = assignments.length
           ? "No assignments match your filter."
           : "No assignments yet. Add your first task.";
+
         list.appendChild(empty);
         return;
       }
@@ -877,6 +1052,7 @@
         toggle.addEventListener("click", async () => {
           const nextStatus =
             item.status === "Pending" ? "Completed" : "Pending";
+
           toggle.disabled = true;
 
           try {
@@ -887,6 +1063,7 @@
                 body: JSON.stringify({ status: nextStatus })
               }
             );
+
             await loadAssignments();
           } catch (error) {
             console.error("Update status error:", error);
@@ -901,7 +1078,9 @@
         remove.textContent = "Delete";
 
         remove.addEventListener("click", async () => {
-          if (!confirm(`Delete "${item.title}"?`)) return;
+          if (!confirm(`Delete "${item.title}"?`)) {
+            return;
+          }
 
           remove.disabled = true;
 
@@ -910,6 +1089,7 @@
               `/assignments/${encodeURIComponent(item.id)}`,
               { method: "DELETE" }
             );
+
             await loadAssignments();
           } catch (error) {
             console.error("Delete assignment error:", error);
@@ -972,6 +1152,7 @@
     $("assignment-filter").addEventListener("change", renderAssignments);
     $("assignment-search").addEventListener("input", renderAssignments);
 
+    // Automatically refresh dashboard and Classroom status after login.
     auth.onAuthStateChanged(user => {
       authGeneration++;
       loadingAssignments = false;
@@ -987,7 +1168,14 @@
 
       if (user) {
         loadAssignments();
+        checkClassroomStatus();
       } else {
+        $("classroom-status").textContent = "Sign in required";
+        $("classroom-message").textContent =
+          "Sign in to check your Google Classroom connection.";
+        $("classroom-connect-button").hidden = false;
+        $("classroom-disconnect-button").hidden = true;
+
         $("assignment-filter").value = "All";
         $("assignment-search").value = "";
       }
@@ -996,7 +1184,9 @@
     let scrollFrame = 0;
 
     window.addEventListener("scroll", () => {
-      if (scrollFrame) return;
+      if (scrollFrame) {
+        return;
+      }
 
       scrollFrame = requestAnimationFrame(() => {
         const maxScroll = Math.max(
@@ -1005,12 +1195,18 @@
         );
 
         const progress = Math.min(100, window.scrollY / maxScroll * 100);
-        document.documentElement.style.setProperty("--scroll", progress.toFixed(2));
+
+        document.documentElement.style.setProperty(
+          "--scroll",
+          progress.toFixed(2)
+        );
+
         scrollFrame = 0;
       });
     }, { passive: true });
 
     const navLinks = document.querySelectorAll(".nav-link[href^='#']");
+
     const sections = [...navLinks]
       .map(link => document.querySelector(link.getAttribute("href")))
       .filter(Boolean);
@@ -1018,7 +1214,9 @@
     if ("IntersectionObserver" in window) {
       const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
+          if (!entry.isIntersecting) {
+            return;
+          }
 
           navLinks.forEach(link => {
             link.classList.toggle(
