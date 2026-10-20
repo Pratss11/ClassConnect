@@ -46,14 +46,9 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || "classconnect",
  port: Number(process.env.DB_PORT) || 3306,
 
-    sssl: process.env.DB_HOST
+  ssl: process.env.DB_HOST
   ? {
-      ca: process.env.DB_CA_CERT
-        ? process.env.DB_CA_CERT.replace(/\\n/g, "\n")
-        : require("fs").readFileSync(
-            require("path").join(__dirname, "ca.pem"),
-            "utf8"
-          ),
+      ca: process.env.DB_CA_CERT.replace(/\\n/g, "\n"),
       rejectUnauthorized: true,
     }
   : undefined,
