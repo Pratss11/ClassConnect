@@ -1,9 +1,11 @@
 
 require("dotenv").config();
 
+
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
+const createClassroomOAuthRouter = require("./classroom-oauth");
 
 // Use Firebase Admin's modular API.
 const { initializeApp, cert, getApps } = require("firebase-admin/app");
@@ -42,19 +44,17 @@ const pool = mysql.createPool({
   user: process.env.DB_USER || "classconnect_app",
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME || "classconnect",
-  port: Number(process.env.DB_PORT) || 3306,
+ port: Number(process.env.DB_PORT) || 3306,
 
-  ssl: process.env.DB_HOST
-  ? {
-      ca: process.env.DB_CA_CERT
-        ? process.env.DB_CA_CERT.replace(/\\n/g, "\n")
-        : require("fs").readFileSync(
-            require("path").join(__dirname, "ca.pem"),
-            "utf8"
-          ),
-      rejectUnauthorized: true,
-    }
-  : undefined,
+    ssl: process.env.DB_HOST
+    ? {
+        ca: require("fs").readFileSync(
+          require("path").join(__dirname, "ca.pem"),
+          "utf8"
+        ),
+        rejectUnauthorized: true,
+      }
+    : undefined,
 
   waitForConnections: true,
   connectionLimit: 10,
@@ -82,7 +82,7 @@ app.get("/api/health", async (req, res) => {
       database: "connected",
     });
   } catch (error) {
-    console.error("Health check failed:", error.message);
+    console.error("Health check failed:", error);
 
     res.status(500).json({
       status: "ERROR",
@@ -118,10 +118,14 @@ async function requireFirebaseUser(req, res, next) {
     });
   }
 }
+const classroomOAuthRouter = createClassroomOAuthRouter({
+  pool,
+  requireFirebaseUser,
+});
 
 // All assignment routes require Firebase authentication.
 app.use("/api/assignments", requireFirebaseUser);
-
+app.use("/api/classroom", classroomOAuthRouter);
 // GET: current user's assignments only.
 app.get("/api/assignments", async (req, res) => {
   try {
