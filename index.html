@@ -1,1237 +1,2236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ClassConnect | Premium Student Workspace</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#eaf3ff">
 
-  <style>
-    * { box-sizing: border-box; }
+<title>ClassConnect | Student Workspace</title>
 
-    :root {
-      --scroll: 0;
-      --text: #f6f7ff;
-      --muted: #b1bad0;
-      --line: rgba(255,255,255,.19);
-      --accent: #c4b5fd;
-      --blue: #93c5fd;
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+<style>
+:root {
+  --blue: #3987ff;
+  --blue-dark: #1763df;
+  --ink: #13213c;
+  --muted: #7184a5;
+  --glass: rgba(255,255,255,.64);
+  --border: rgba(255,255,255,.88);
+  --shadow: 0 12px 38px rgba(65,105,170,.10);
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      padding: 22px;
-      color: var(--text);
-      font-family: Inter, "Segoe UI", Arial, sans-serif;
-      background: #111321;
-      overflow-x: hidden;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    button, input, textarea, select { font: inherit; }
-    button { cursor: pointer; }
-    button:disabled { opacity: .55; cursor: wait; }
-    [hidden] { display: none !important; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 5% 10%, #d7e7ff 0, transparent 35%),
+    radial-gradient(ellipse at 90% 15%, #c9e9ff 0, transparent 35%),
+    radial-gradient(ellipse at 60% 95%, #d4f7f0 0, transparent 35%),
+    linear-gradient(135deg,#f4f7ff,#e7f2ff 50%,#f5faff);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
 
-    .ambient {
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse at 15% 12%, rgba(141,119,255,.24), transparent 38%),
-        radial-gradient(ellipse at 85% 45%, rgba(86,185,255,.19), transparent 38%),
-        radial-gradient(ellipse at 45% 100%, rgba(190,140,255,.20), transparent 42%),
-        linear-gradient(135deg,#141827,#101522 48%,#17152b);
-    }
+button, input, select, textarea {
+  font: inherit;
+}
 
-    .grain {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      opacity: .12;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.19'/%3E%3C/svg%3E");
-    }
+button {
+  cursor: pointer;
+}
 
-    .glass {
-      position: relative;
-      isolation: isolate;
-      overflow: hidden;
-      background: linear-gradient(135deg,rgba(255,255,255,.125),rgba(255,255,255,.035) 48%,rgba(177,160,255,.045));
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      backdrop-filter: blur(28px) saturate(155%);
-      -webkit-backdrop-filter: blur(28px) saturate(155%);
-      box-shadow: 0 22px 65px rgba(3,6,20,.20), inset 0 1px 0 rgba(255,255,255,.20);
-    }
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #85b8ff;
+  outline-offset: 3px;
+}
 
-    .brand {
-      color: #d6d0ff;
-      font-size: 12px;
-      font-weight: 850;
-      letter-spacing: 3px;
-    }
+button:active {
+  transform: scale(.97);
+}
 
-    .muted { color: var(--muted); font-size: 13px; }
-    h1,h2,h3,p { margin-top: 0; }
-    h1 { font-size: clamp(27px,4vw,42px); letter-spacing: -1.3px; line-height: 1.15; }
-    h2 { font-size: 22px; letter-spacing: -.45px; margin-bottom: 7px; }
-    h3 { font-size: 16px; margin-bottom: 8px; }
-    p { color: var(--muted); line-height: 1.65; }
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  box-shadow: var(--shadow);
+}
 
-    .auth-wrap {
-      min-height: calc(100vh - 44px);
-      display: grid;
-      place-items: center;
-    }
+.topbar {
+  height: 78px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 12px 26px;
+  background: rgba(246,250,255,.77);
+  border-bottom: 1px solid rgba(255,255,255,.9);
+  backdrop-filter: blur(25px);
+}
 
-    .auth-card {
-      width: 100%;
-      max-width: 455px;
-      padding: 36px;
-      animation: enter .7s ease both;
-    }
+.brand {
+  min-width: 265px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
 
-    .auth-card h1 { margin: 28px 0 12px; font-size: 32px; }
-    .auth-card > p { font-size: 14px; }
+.brand-mark {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  color: white;
+  border-radius: 15px;
+  background: linear-gradient(145deg,#7ec7ff,#317aff);
+  box-shadow: 0 7px 18px #7aafff70;
+}
 
-    label {
-      display: block;
-      margin: 19px 0 9px;
-      color: #e3e6f7;
-      font-size: 13px;
-      font-weight: 600;
-    }
+.brand span {
+  color: var(--blue);
+}
 
-    input, textarea, select {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid rgba(255,255,255,.16);
-      border-radius: 12px;
-      color: white;
-      background: rgba(7,10,22,.29);
-      outline: none;
-      transition: border-color .2s, box-shadow .2s;
-    }
+.searchbar {
+  flex: 1;
+  max-width: 520px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 17px;
+  border: 1px solid #fff;
+  border-radius: 30px;
+  background: rgba(255,255,255,.74);
+  color: var(--muted);
+}
 
-    input::placeholder, textarea::placeholder { color: #939cb5; }
+.searchbar input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+}
 
-    input:focus, textarea:focus, select:focus {
-      border-color: rgba(196,181,253,.85);
-      box-shadow: 0 0 0 4px rgba(167,139,250,.11);
-    }
+.profile {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
 
-    select option { background: #20233d; color: white; }
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: white;
+  background: linear-gradient(140deg,#70baff,#2464d8);
+}
 
-    button {
-      padding: 13px 16px;
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 12px;
-      background: rgba(255,255,255,.075);
-      transition: transform .2s, background .2s;
-    }
+.layout {
+  display: grid;
+  grid-template-columns: 225px minmax(0,1fr);
+  gap: 24px;
+  padding: 18px;
+}
 
-    button:hover:not(:disabled) {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.13);
-    }
+.sidebar {
+  padding: 15px;
+  border-radius: 25px;
+  height: calc(100vh - 112px);
+  min-height: 500px;
+  position: sticky;
+  top: 96px;
+}
 
-    .primary {
-      color: #15132a;
-      font-weight: 800;
-      border: 1px solid rgba(255,255,255,.45);
-      background: linear-gradient(115deg,#e1d5ff,#b9c9ff 58%,#a4d9ff);
-      box-shadow: 0 8px 28px rgba(145,137,255,.19);
-    }
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 13px;
+  margin: 4px 0;
+  color: #536987;
+  border: 0;
+  border-radius: 15px;
+  background: transparent;
+  text-align: left;
+  transition: .22s ease;
+}
 
-    .primary:hover:not(:disabled) {
-      background: linear-gradient(115deg,#eee5ff,#cbd5ff,#b8e4ff);
-    }
+.nav-btn i {
+  width: 20px;
+  font-size: 17px;
+}
 
-    .full { width: 100%; margin-top: 14px; }
+.nav-btn:hover {
+  background: rgba(255,255,255,.8);
+  transform: translateX(2px);
+}
 
-    .text-button {
-      display: block;
-      width: 100%;
-      margin-top: 10px;
-      border: 0;
-      background: transparent;
-      color: #d0c9ff;
-    }
+.nav-btn.active {
+  color: white;
+  background: linear-gradient(115deg,#72b7ff,#4387ff);
+  box-shadow: 0 8px 22px #4387ff50;
+}
 
-    #auth-message {
-      min-height: 20px;
-      font-size: 13px;
-      overflow-wrap: anywhere;
-    }
+.main {
+  min-width: 0;
+}
 
-    .app {
-      max-width: 1420px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 245px minmax(0,1fr);
-      gap: 22px;
-      align-items: start;
-    }
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 145px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 28px;
+  margin-bottom: 22px;
+  border-radius: 25px;
+  background: linear-gradient(110deg,rgba(255,255,255,.62),rgba(196,224,255,.38));
+}
 
-    .sidebar {
-      min-height: calc(100vh - 44px);
-      padding: 25px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-      position: sticky;
-      top: 22px;
-    }
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  right: 15%;
+  top: -165px;
+  border-radius: 50%;
+  background: #8fc5ff55;
+  filter: blur(10px);
+  pointer-events: none;
+}
 
-    .nav-title {
-      color: #9099b3;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      margin: 5px 10px 12px;
-    }
+.eyebrow {
+  color: #6582a9;
+  font-size: 14px;
+  font-weight: 600;
+}
 
-    .nav-links { display: flex; flex-direction: column; }
+h1 {
+  margin: 7px 0;
+  font-size: clamp(26px,3vw,39px);
+  letter-spacing: -1.6px;
+}
 
-    .nav-link {
-      display: block;
-      margin: 5px 0;
-      padding: 12px;
-      color: #c6cce0;
-      text-decoration: none;
-      font-size: 13px;
-      border: 1px solid transparent;
-      border-radius: 12px;
-    }
+h2 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: -.4px;
+}
 
-    .nav-link:hover, .nav-link.active {
-      background: rgba(194,181,253,.12);
-      border-color: rgba(196,181,253,.12);
-      color: #fff;
-    }
+h3 {
+  margin: 0;
+  font-size: 14px;
+}
 
-    .sidebar-bottom { margin-top: auto; }
-    .sidebar-bottom p { font-size: 12px; }
-    .sidebar-bottom .muted { overflow-wrap: anywhere; }
-    .main { min-width: 0; }
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
 
-    .topbar {
-      padding: 17px 22px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
+.motivation {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  max-width: 260px;
+  padding: 15px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.67);
+  border: 1px solid #fff;
+}
 
-    .topbar strong { font-size: 14px; }
+.motivation-icon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  color: #0ca77b;
+  background: #d9f9ed;
+  border-radius: 14px;
+  font-size: 22px;
+}
 
-    .live-dot {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      margin-right: 8px;
-      border-radius: 50%;
-      background: #86efac;
-      box-shadow: 0 0 12px #86efac;
-    }
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 22px 0 14px;
+}
 
-    .hero {
-      padding: 38px;
-      margin-bottom: 20px;
-      background:
-        radial-gradient(ellipse at 90% 18%,rgba(168,151,255,.20),transparent 38%),
-        radial-gradient(ellipse at 70% 110%,rgba(113,198,255,.13),transparent 40%),
-        linear-gradient(130deg,rgba(255,255,255,.105),rgba(255,255,255,.025));
-    }
+.text-btn {
+  color: var(--blue-dark);
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+  font-size: 12px;
+}
 
-    .eyebrow {
-      color: #d4caff;
-      font-size: 10px;
-      font-weight: 850;
-      letter-spacing: 2.3px;
-    }
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 15px;
+}
 
-    .hero h1 { margin: 18px 0 13px; }
-    .hero h1 span { color: #c8c1ff; }
-    .hero p { max-width: 560px; font-size: 14px; }
+.subject-card {
+  min-width: 0;
+  position: relative;
+  padding: 18px;
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+  animation: appear .45s ease both;
+}
 
-    .pill {
-      display: inline-block;
-      margin-top: 12px;
-      padding: 8px 12px;
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 99px;
-      background: rgba(255,255,255,.06);
-      color: #dfe2ff;
-      font-size: 11px;
-    }
+.subject-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px #5488d52a;
+  border-color: #b9d8ff;
+}
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3,minmax(0,1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
+.subject-card.selected {
+  border: 1px solid #77b5ff;
+  box-shadow: 0 0 0 2px #a6ceff55, 0 15px 35px #4b8fff20;
+}
 
-    .stat { padding: 22px; }
+.subject-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+}
 
-    .stat-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-    }
+.subject-icon {
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  font-size: 23px;
+}
 
-    .stat-symbol, .quick-icon {
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: rgba(198,181,253,.13);
-      border: 1px solid rgba(255,255,255,.10);
-      color: #d7ccff;
-    }
+.subject-name {
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
 
-    .stat-symbol { width: 37px; height: 37px; }
-    .stat-number { font-size: 34px; font-weight: 800; letter-spacing: -1px; margin-top: 18px; }
-    .stat p { font-size: 12px; margin: 5px 0 0; }
-    .stat-label { font-size: 10px; letter-spacing: 1.5px; color: #aeb7ce; }
+.subject-code {
+  margin-top: 5px;
+  color: #6982a8;
+  font-size: 12px;
+}
 
-    .section { padding: 25px; margin-bottom: 20px; }
+.subject-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 15px;
+}
 
-    .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 21px;
-    }
+.file-badges {
+  display: flex;
+  gap: 5px;
+}
 
-    .assignment-layout {
-      display: grid;
-      grid-template-columns: minmax(220px,.8fr) minmax(0,1.2fr);
-      gap: 22px;
-    }
+.file-badge {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: #edf4ff;
+  color: #287cff;
+  font-size: 13px;
+}
 
-    .assignment-form {
-      padding: 19px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 16px;
-      background: rgba(8,11,25,.20);
-    }
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0,1.35fr) minmax(230px,.85fr) minmax(250px,1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
 
-    .assignment-form label { margin-top: 16px; }
-    .assignment-form textarea { resize: vertical; }
-    .assignment-form button { margin-top: 17px; }
+.panel {
+  min-width: 0;
+  padding: 18px;
+  border-radius: 23px;
+}
 
-    .assignment-tools { display: flex; gap: 10px; margin-bottom: 15px; }
-    .assignment-tools input { min-width: 0; flex: 1; }
-    .assignment-tools select { width: auto; max-width: 130px; }
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
 
-    .assignment-item {
-      position: relative;
-      padding: 17px;
-      margin-bottom: 11px;
-      border: 1px solid rgba(255,255,255,.13);
-      border-radius: 15px;
-      background: linear-gradient(130deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
-      transition: transform .2s, border-color .2s;
-    }
+.material-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 0;
+  border-bottom: 1px solid #dce9f8;
+}
 
-    .assignment-item:hover {
-      transform: translateY(-2px);
-      border-color: rgba(196,181,253,.30);
-    }
+.material-row:last-child {
+  border-bottom: 0;
+}
 
-    .assignment-item h3 { overflow-wrap: anywhere; }
-    .assignment-item p { font-size: 12px; margin: 7px 0; overflow-wrap: anywhere; }
-    .assignment-status { font-size: 11px; color: #d4caff; }
-    .assignment-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
-    .assignment-actions button { padding: 8px 10px; font-size: 11px; }
+.file-icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: #e6f1ff;
+  color: #2582ff;
+  font-size: 20px;
+}
 
-    .empty-state {
-      padding: 25px 18px;
-      text-align: center;
-      border: 1px dashed rgba(255,255,255,.16);
-      border-radius: 14px;
-      color: var(--muted);
-      font-size: 13px;
-      overflow-wrap: anywhere;
-    }
+.material-info {
+  flex: 1;
+  min-width: 0;
+}
 
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(3,minmax(0,1fr));
-      gap: 15px;
-    }
+.material-info h3 {
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
 
-    .quick-card { min-height: 170px; padding: 23px; }
-    .quick-icon { width: 40px; height: 40px; margin-bottom: 18px; font-size: 18px; }
-    .quick-card p { font-size: 12px; margin-bottom: 0; }
-    .footer { text-align: center; padding: 25px; color: #969fb6; font-size: 11px; }
+.material-info p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
 
-    .droplet {
-      position: absolute;
-      z-index: -1;
-      pointer-events: none;
-      width: 76px;
-      height: 76px;
-      border-radius: 43% 57% 61% 39% / 42% 39% 61% 58%;
-      background: radial-gradient(circle at 28% 22%,rgba(255,255,255,.75),transparent 13%),rgba(255,255,255,.035);
-      border: 1px solid rgba(255,255,255,.21);
-      box-shadow: inset 5px 5px 12px rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.08);
-      backdrop-filter: blur(3px);
-      opacity: .55;
-      animation: float 8s ease-in-out infinite;
-    }
+.small-btn {
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 11px;
+  background: #e4efff;
+  color: #1767eb;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
 
-    .droplet.one { top: 22px; right: 28px; width: 60px; height: 60px; }
-    .droplet.two { bottom: 30px; right: 95px; width: 32px; height: 32px; }
-    .droplet.three { top: 45px; right: 65px; width: 43px; height: 43px; }
+.progress-ring {
+  width: 145px;
+  height: 145px;
+  margin: 20px auto;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: conic-gradient(#20c9a2 0 68%,#e5effb 68% 100%);
+  position: relative;
+}
 
-    @keyframes float {
-      0%,100% { transform: translate3d(0,0,0); }
-      50% { transform: translate3d(-8px,-13px,0); }
-    }
+.progress-ring::before {
+  content: "";
+  position: absolute;
+  width: 111px;
+  height: 111px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.96);
+}
 
-    @keyframes enter {
-      from { opacity: 0; transform: translateY(12px) scale(.99); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
+.progress-value {
+  z-index: 1;
+  text-align: center;
+}
 
-    @media(max-width:950px) {
-      .app { grid-template-columns: 1fr; }
-      .sidebar { position: relative; top: auto; min-height: auto; }
-      .sidebar-bottom { margin-top: 0; }
-      .nav-links { flex-direction: row; flex-wrap: wrap; }
-      .nav-link { margin: 2px; }
-    }
+.progress-value strong {
+  display: block;
+  font-size: 27px;
+}
 
-    @media(max-width:650px) {
-      body { padding: 12px; }
-      .auth-wrap { min-height: calc(100vh - 24px); }
-      .auth-card { padding: 25px; }
-      .hero, .section { padding: 21px; }
-      .stats, .quick-grid { grid-template-columns: 1fr; }
-      .assignment-layout { grid-template-columns: 1fr; }
-      .topbar { align-items: flex-start; flex-direction: column; }
-      .hero h1 { font-size: 31px; }
-      .assignment-tools { flex-direction: column; }
-      .assignment-tools select { width: 100%; max-width: none; }
-    }
+.progress-value span {
+  font-size: 11px;
+  color: var(--muted);
+}
 
-    @media(prefers-reduced-motion:reduce) {
-      *,*::before,*::after {
-        scroll-behavior: auto !important;
-        animation: none !important;
-        transition: none !important;
-      }
-    }
-  </style>
+.progress-line {
+  height: 7px;
+  flex: 1;
+  background: #e5edf7;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-line span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,#55b9ff,#21cba5);
+}
+
+.progress-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  font-size: 12px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #20c9a2;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 0;
+  border-bottom: 1px solid #dce9f8;
+}
+
+.task-row input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--blue);
+}
+
+.task-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-content strong {
+  display: block;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.task-content span {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.pill {
+  padding: 6px 8px;
+  border-radius: 20px;
+  background: #e2f8ef;
+  color: #10865f;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 12px 17px;
+  border: 0;
+  border-radius: 13px;
+  color: white;
+  font-weight: 700;
+  background: linear-gradient(110deg,#65b3ff,#347bff);
+  box-shadow: 0 8px 18px #4c8dff30;
+}
+
+.secondary-btn {
+  padding: 11px 14px;
+  border: 1px solid #dce8f8;
+  border-radius: 12px;
+  color: #466284;
+  background: rgba(255,255,255,.7);
+  font-weight: 600;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.toolbar input,
+.toolbar select,
+.form-control {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #dce8f8;
+  border-radius: 12px;
+  background: rgba(255,255,255,.8);
+  color: var(--ink);
+}
+
+.toolbar input {
+  flex: 1;
+}
+
+.page-view {
+  display: none;
+  animation: appear .25s ease both;
+}
+
+.page-view.active {
+  display: block;
+}
+
+.subject-folder-list {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 15px;
+}
+
+.empty {
+  padding: 30px 15px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.status-message {
+  margin: 10px 0;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: #e6f4ff;
+  color: #245b9d;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  padding: 18px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20,39,70,.32);
+  backdrop-filter: blur(12px);
+}
+
+.modal.open {
+  display: flex;
+  animation: appear .2s ease;
+}
+
+.modal-card {
+  width: min(700px,100%);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 22px;
+  border: 1px solid #fff;
+  border-radius: 24px;
+  background: rgba(247,251,255,.96);
+  box-shadow: 0 25px 90px #18375b30;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 17px;
+}
+
+.close-btn {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: #e6effb;
+  color: #385578;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d9e6f7;
+  border-radius: 12px;
+  background: white;
+}
+
+.form-group textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.pdf-frame {
+  width: 100%;
+  height: 65vh;
+  border: 0;
+  border-radius: 14px;
+  background: white;
+}
+
+.mobile-nav {
+  display: none;
+}
+
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 200;
+  max-width: calc(100vw - 40px);
+  padding: 14px 18px;
+  border-radius: 15px;
+  color: #15375e;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 12px 35px #294d7930;
+  opacity: 0;
+  transform: translateY(15px);
+  pointer-events: none;
+  transition: .25s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Premium glass bokeh when cards are touched or clicked */
+.bokeh {
+  position: fixed;
+  z-index: 150;
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle at 35% 30%,
+    rgba(255,255,255,.95),
+    rgba(150,205,255,.48) 35%,
+    rgba(180,210,255,.08) 70%,
+    transparent 75%);
+  border: 1px solid rgba(255,255,255,.7);
+  box-shadow: 0 0 35px #8fc4ff50, inset 0 0 18px #ffffffaa;
+  backdrop-filter: blur(3px);
+  animation: bokehPop .8s ease-out forwards;
+}
+
+@keyframes bokehPop {
+  0% { opacity: 0; transform: translate(-50%,-50%) scale(.2); }
+  25% { opacity: .9; }
+  100% { opacity: 0; transform: translate(-50%,-50%) scale(1.7); }
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1150px) {
+  .layout { grid-template-columns: 190px minmax(0,1fr); gap: 15px; }
+  .brand { min-width: 205px; font-size: 22px; }
+  .subject-grid, .subject-folder-list { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .dashboard-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .dashboard-grid .materials-panel { grid-column: 1 / -1; }
+}
+
+@media (max-width: 760px) {
+  .topbar { height: auto; min-height: 70px; padding: 12px; gap: 10px; flex-wrap: wrap; }
+  .brand { min-width: 0; flex: 1; font-size: 21px; }
+  .brand-mark { width: 39px; height: 39px; }
+  .profile { margin-left: 0; }
+  .profile .profile-text { display: none; }
+  .searchbar { order: 3; flex: 1 0 100%; max-width: none; }
+  .layout { display: block; padding: 12px; padding-bottom: 82px; }
+  .sidebar { display: none; }
+  .hero { padding: 20px; min-height: 135px; }
+  .motivation { display: none; }
+  .subject-grid, .subject-folder-list { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+  .subject-card { padding: 13px; }
+  .subject-icon { width: 43px; height: 43px; font-size: 19px; }
+  .subject-name { font-size: 12px; }
+  .subject-code { font-size: 10px; }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .dashboard-grid .materials-panel { grid-column: auto; }
+  .panel { padding: 15px; }
+  .mobile-nav {
+    position: fixed;
+    z-index: 30;
+    display: flex;
+    justify-content: space-around;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    padding: 9px 4px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.88);
+    border: 1px solid white;
+    box-shadow: 0 8px 30px #315c8d25;
+    backdrop-filter: blur(22px);
+  }
+  .mobile-nav button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border: 0;
+    background: transparent;
+    color: #6a7f9f;
+    font-size: 10px;
+    padding: 5px;
+  }
+  .mobile-nav button i { font-size: 17px; }
+  .mobile-nav button.active { color: #287aff; }
+}
+
+@media (max-width: 420px) {
+  .subject-grid, .subject-folder-list { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: auto; }
+  .hero h1 { font-size: 27px; }
+  .material-row { gap: 8px; }
+  .small-btn { padding: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== ClassConnect Premium Midnight Glass Theme ===== */
+.classroom-announcements{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.announcement-card{padding:14px;border:1px solid rgba(220,228,255,.12);border-radius:15px;background:rgba(255,255,255,.045)}.announcement-card p{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;margin:7px 0}.announcement-card small{color:#a8b6d7}@media(max-width:650px){.classroom-announcements{grid-template-columns:1fr}}
+:root{--blue:#83aaff;--blue-dark:#a9c5ff;--ink:#f3f5ff;--muted:#a8b2cf;--glass:rgba(24,29,49,.64);--border:rgba(211,220,255,.17);--shadow:0 18px 55px rgba(0,0,0,.25)}
+html{color-scheme:dark;scroll-behavior:smooth}
+body{color:var(--ink);background:radial-gradient(ellipse at 8% 5%,rgba(102,127,255,.20),transparent 34%),radial-gradient(ellipse at 92% 22%,rgba(65,190,255,.14),transparent 35%),radial-gradient(ellipse at 50% 100%,rgba(176,111,255,.15),transparent 40%),linear-gradient(135deg,#0c1020,#11172a 48%,#171328);background-attachment:fixed}
+body:before,body:after{content:"";position:fixed;z-index:-1;pointer-events:none;border-radius:50%;filter:blur(2px);opacity:.5}
+body:before{width:230px;height:230px;left:-95px;bottom:8%;background:radial-gradient(circle,rgba(105,178,255,.25),transparent 70%)}
+body:after{width:280px;height:280px;right:-120px;top:18%;background:radial-gradient(circle,rgba(179,132,255,.19),transparent 70%)}
+.glass,.panel,.sidebar,.subject-card,.hero,.modal-card{background:linear-gradient(135deg,rgba(255,255,255,.105),rgba(255,255,255,.035) 55%,rgba(143,157,255,.035));border:1px solid rgba(220,228,255,.15);backdrop-filter:blur(28px) saturate(155%);-webkit-backdrop-filter:blur(28px) saturate(155%);box-shadow:0 22px 60px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.10)}
+.topbar{background:rgba(12,16,32,.72);border-bottom:1px solid rgba(220,228,255,.12);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px)}
+.brand{color:#f3f4ff}.brand span{color:#9fc4ff}.brand-mark{background:linear-gradient(145deg,#a7caff,#6657e8);box-shadow:0 7px 25px rgba(105,132,255,.28)}
+.searchbar,.motivation,.toolbar input,.toolbar select,.form-control,.form-group input,.form-group select,.form-group textarea{color:#f1f4ff;background:rgba(8,12,27,.48);border-color:rgba(221,228,255,.16)}
+.searchbar input,.searchbar input::placeholder,.form-group input::placeholder,.form-group textarea::placeholder,.toolbar input::placeholder{color:#9ca9c8}
+.nav-btn{color:#b9c5e3}.nav-btn:hover{background:rgba(255,255,255,.08)}.nav-btn.active{background:linear-gradient(115deg,#617ef4,#4389ed);box-shadow:0 8px 28px rgba(68,120,255,.28)}
+.hero{background:radial-gradient(ellipse at 88% 18%,rgba(105,143,255,.19),transparent 38%),linear-gradient(120deg,rgba(255,255,255,.09),rgba(255,255,255,.025))}.eyebrow,.subject-code,.muted{color:#a6b6d8}.motivation{border-color:rgba(255,255,255,.13)}
+h1,h2,h3,.subject-name,.material-info h3,.task-content strong{color:#f4f6ff}.text-btn{color:#a9c5ff}
+.subject-card{transition:transform .25s,box-shadow .25s,border-color .25s,background .25s}.subject-card:hover{transform:translateY(-4px);border-color:rgba(145,183,255,.55);box-shadow:0 22px 50px rgba(40,70,150,.25),inset 0 1px 0 rgba(255,255,255,.14);background:linear-gradient(135deg,rgba(112,142,255,.16),rgba(255,255,255,.04))}.subject-card.selected{border-color:#94b8ff;box-shadow:0 0 0 2px rgba(126,166,255,.16),0 20px 45px rgba(39,80,180,.2)}
+.material-row,.task-row{border-bottom-color:rgba(220,228,255,.10)}.file-icon,.file-badge{background:rgba(107,151,255,.13);color:#a7c6ff}.small-btn{background:rgba(94,139,255,.17);color:#c2d5ff;border:1px solid rgba(153,184,255,.14)}.small-btn:hover{background:rgba(104,150,255,.28)}
+.progress-ring::before{background:#171d32}.progress-line{background:rgba(255,255,255,.11)}.progress-label{color:#d5def5}.dot{box-shadow:0 0 12px currentColor}
+.primary-btn{color:#0c1530;background:linear-gradient(110deg,#b8d3ff,#8f9dff 55%,#b5a6ff);box-shadow:0 8px 25px rgba(104,123,255,.22)}.primary-btn:hover{filter:brightness(1.07)}.secondary-btn{color:#dce5ff;background:rgba(255,255,255,.07);border-color:rgba(220,228,255,.16)}
+.pill{background:rgba(46,205,151,.13);color:#7de8c2}.status-message{background:rgba(105,157,255,.12);color:#c9dcff;border:1px solid rgba(130,170,255,.13)}
+.modal{background:rgba(3,6,18,.67)}.modal-card{background:rgba(20,25,44,.94);border-color:rgba(224,230,255,.17)}.close-btn{background:rgba(255,255,255,.09);color:#e7ecff;border:1px solid rgba(255,255,255,.12)}
+.form-group label{color:#dfe6ff}.form-group input,.form-group select,.form-group textarea{background:rgba(7,11,25,.7);color:#f3f5ff}.form-group select option{background:#171d32;color:#f3f5ff}
+.progress-ring::before{border:1px solid rgba(255,255,255,.08)}.mobile-nav{background:rgba(18,23,42,.86);border-color:rgba(230,235,255,.15);box-shadow:0 12px 40px rgba(0,0,0,.35)}.mobile-nav button{color:#aebada}.mobile-nav button.active{color:#b6ccff}
+.toast{color:#edf2ff;background:rgba(25,31,53,.96);border:1px solid rgba(230,235,255,.15);box-shadow:0 15px 40px rgba(0,0,0,.35)}
+.empty{color:#aebbd9}.empty p{color:#aebbd9}.pdf-frame{background:#fff}.bokeh{width:110px;height:110px;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95),rgba(155,185,255,.36) 28%,rgba(157,122,255,.14) 55%,transparent 74%);border-color:rgba(230,238,255,.65);box-shadow:0 0 38px rgba(126,157,255,.4),inset 0 0 20px rgba(255,255,255,.65)}
+/* More visible counts and done/pending indicators in each subject folder */
+.subject-counts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.subject-counts span{font-size:10px;font-weight:700;padding:5px 8px;border-radius:20px;background:rgba(255,255,255,.07);color:#d9e2ff;border:1px solid rgba(255,255,255,.08)}.subject-counts .remaining{color:#ffd19a;background:rgba(255,169,72,.10)}.subject-counts .completed{color:#81edc7;background:rgba(32,201,162,.10)}
+.folder-summary{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}.folder-summary span{padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.08);font-size:12px;color:#dce5ff}
+@media(max-width:760px){.topbar{background:rgba(12,16,32,.86)}.layout{padding:10px}.hero{border-radius:20px}.panel{border-radius:19px}.subject-card{border-radius:18px}}
+
+</style>
 </head>
 
 <body>
-  <div class="ambient" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
 
-  <section id="auth-section" class="auth-wrap">
-    <div class="auth-card glass">
-      <div class="brand">CLASSCONNECT</div>
-      <h1 id="auth-heading">Welcome back</h1>
-      <p id="auth-subtitle">Sign in to continue to your student workspace.</p>
-      <p id="auth-message" role="status" aria-live="polite"></p>
-
-      <form id="auth-form">
-        <label for="auth-email">Email address</label>
-        <input id="auth-email" type="email" required autocomplete="email" placeholder="student@example.com">
-
-        <label for="auth-password">Password</label>
-        <input id="auth-password" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters">
-
-        <button id="login-button" class="primary full" type="submit">Sign in</button>
-        <button id="signup-button" class="full" type="button">Create a student account</button>
-        <button id="forgot-password" class="text-button" type="button">Forgot password?</button>
-      </form>
-    </div>
-  </section>
-
-  <div id="app-shell" class="app" hidden>
-    <aside class="sidebar glass">
-      <div class="brand">CLASSCONNECT</div>
-
-      <div>
-        <div class="nav-title">YOUR WORKSPACE</div>
-
-        <nav class="nav-links">
-          <a class="nav-link active" href="#dashboard">✦ Dashboard</a>
-          <a class="nav-link" href="#assignment-section">▤ Assignments</a>
-          <a class="nav-link" href="#study-materials">▧ Study materials</a>
-          <a class="nav-link" href="#study-planner">◷ Study planner</a>
-          <a class="nav-link" href="#announcements">♧ Announcements</a>
-          <a class="nav-link" href="#google-classroom">▣ Google Classroom</a>
-        </nav>
-      </div>
-
-      <div class="sidebar-bottom">
-        <h3>Keep learning.</h3>
-        <p>Small steps every day lead to big results.</p>
-        <p id="student-email" class="muted"></p>
-        <button id="logout-button" class="full" type="button">Log out</button>
-      </div>
-    </aside>
-
-    <main id="dashboard" class="main">
-      <header class="topbar glass">
-        <div>
-          <div class="muted">YOUR PERSONAL CLASSROOM</div>
-          <strong>Student Dashboard</strong>
-        </div>
-        <div class="muted"><span class="live-dot"></span>Your workspace is ready</div>
-      </header>
-
-      <section class="hero glass">
-        <span class="droplet one"></span>
-        <span class="droplet two"></span>
-        <span class="eyebrow">YOUR PERSONAL CLASSROOM</span>
-        <h1>Make room for<br><span>great ideas.</span></h1>
-        <p>Your assignments, study resources and class updates — all in one place.</p>
-        <a class="nav-link" href="#assignment-section">Explore your workspace ↓</a>
-        <span class="pill">TE AIML · Student workspace</span>
-      </section>
-
-      <section class="stats">
-        <article class="stat glass">
-          <span class="droplet three"></span>
-          <div class="stat-top"><span class="stat-symbol">▤</span><span class="stat-label">ALL TASKS</span></div>
-          <div id="total-count" class="stat-number">0</div>
-          <p>Total assignments</p>
-        </article>
-
-        <article class="stat glass">
-          <div class="stat-top"><span class="stat-symbol">◷</span><span class="stat-label">IN PROGRESS</span></div>
-          <div id="pending-count" class="stat-number">0</div>
-          <p>Pending assignments</p>
-        </article>
-
-        <article class="stat glass">
-          <div class="stat-top"><span class="stat-symbol">✓</span><span class="stat-label">FINISHED</span></div>
-          <div id="completed-count" class="stat-number">0</div>
-          <p>Completed assignments</p>
-        </article>
-      </section>
-
-      <section id="assignment-section" class="section glass">
-        <div class="section-head">
-          <div>
-            <h2>Assignment manager</h2>
-            <p class="muted">Stay on top of your academic tasks.</p>
-          </div>
-          <span id="visible-count" class="muted">0 tasks</span>
-        </div>
-
-        <div class="assignment-layout">
-          <form id="assignment-form" class="assignment-form">
-            <h3>＋ New assignment</h3>
-
-            <label for="assignment-title">Assignment title</label>
-            <input id="assignment-title" required maxlength="150" placeholder="e.g. Machine Learning Practical">
-
-            <label for="assignment-subject">Subject</label>
-            <input id="assignment-subject" required maxlength="100" placeholder="e.g. Artificial Intelligence">
-
-            <label for="assignment-deadline">Due date</label>
-            <input id="assignment-deadline" type="date">
-
-            <label for="assignment-description">Description</label>
-            <textarea id="assignment-description" rows="3" maxlength="2000" placeholder="Add notes..."></textarea>
-
-            <button class="primary full" type="submit">Add assignment</button>
-            <p class="muted">Assignments are saved to your ClassConnect MySQL database.</p>
-          </form>
-
-          <div>
-            <div class="assignment-tools">
-              <input id="assignment-search" type="search" placeholder="Search assignments...">
-              <select id="assignment-filter" aria-label="Filter assignments">
-                <option value="All">All tasks</option>
-                <option value="Pending">Pending</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-
-            <div id="assignment-list"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="quick-grid">
-        <article id="study-materials" class="quick-card glass">
-          <div class="quick-icon">▧</div>
-          <h3>Study materials</h3>
-          <p>Keep your notes and learning resources organized.</p>
-        </article>
-
-        <article id="study-planner" class="quick-card glass">
-          <div class="quick-icon">◷</div>
-          <h3>Study planner</h3>
-          <p>Plan revision, practicals and exam preparation.</p>
-        </article>
-
-        <article id="announcements" class="quick-card glass">
-          <div class="quick-icon">♧</div>
-          <h3>Class announcements</h3>
-          <p>Keep important class notices in one place.</p>
-        </article>
-      </section>
-
-      <section id="google-classroom" class="section glass">
-        <div class="section-head">
-          <div>
-            <h2>Google Classroom</h2>
-            <p class="muted">Connect your Google account to access your classroom information.</p>
-          </div>
-
-          <span id="classroom-status" class="pill">Checking connection...</span>
-        </div>
-
-        <div>
-          <p id="classroom-message" class="muted" role="status" aria-live="polite">
-            Connect Google Classroom to get started.
-          </p>
-
-          <button id="classroom-connect-button" class="primary" type="button">
-            Connect Google Classroom
-          </button>
-
-          <button id="classroom-disconnect-button" type="button" hidden>
-            Disconnect
-          </button>
-        </div>
-      </section>
-
-      <footer class="footer">ClassConnect · Made for learners, built for progress.</footer>
-    </main>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark"><i class="fa-solid fa-book-open"></i></div>
+    <div>Class<span>Connect</span></div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <label class="searchbar">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input id="globalSearch" type="search"
+      placeholder="Search subjects, study materials, assignments..."
+      aria-label="Search ClassConnect">
+  </label>
 
-  <script>
-    "use strict";
+  <div class="profile">
+    <div class="avatar" id="avatar">P</div>
+    <div class="profile-text">
+      <div id="profileName">Prathamesh Sutar</div>
+      <div class="muted" id="profileCourse">TE AIML</div>
+    </div>
+  </div>
+</header>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyANyFw8l3efaykZf3q8AaTW8yctOoezIzo",
-      authDomain: "classconnect-42a51.firebaseapp.com",
-      projectId: "classconnect-42a51",
-      storageBucket: "classconnect-42a51.firebasestorage.app",
-      messagingSenderId: "899645718197",
-      appId: "1:899645718197:web:425e1dbcc178f5b94e08fc",
-      measurementId: "G-DGLZ9GPQ4Z"
+<div class="layout">
+
+  <aside class="sidebar glass">
+    <button class="nav-btn active" data-page="dashboard">
+      <i class="fa-solid fa-house"></i> Dashboard
+    </button>
+    <button class="nav-btn" data-page="materials">
+      <i class="fa-regular fa-file-lines"></i> Study Materials
+    </button>
+    <button class="nav-btn" data-page="assignments">
+      <i class="fa-regular fa-clipboard"></i> Assignments
+    </button>
+    <button class="nav-btn" data-page="planner">
+      <i class="fa-regular fa-calendar"></i> Study Planner
+    </button>
+    <button class="nav-btn" data-page="classroom">
+      <i class="fa-solid fa-graduation-cap"></i> Google Classroom
+    </button>
+    <button class="nav-btn" data-page="subjects">
+      <i class="fa-regular fa-folder"></i> Subjects
+    </button>
+    <button class="nav-btn" data-page="notes">
+      <i class="fa-regular fa-note-sticky"></i> Notes
+    </button>
+    <button class="nav-btn" id="settingsBtn">
+      <i class="fa-solid fa-gear"></i> Settings
+    </button>
+  </aside>
+
+  <main class="main">
+
+    <section class="hero glass">
+      <div>
+        <div class="eyebrow">Your Learning Space</div>
+        <h1 id="pageTitle">Student Dashboard</h1>
+        <h3 id="helloText">Hello, Prathamesh! 👋</h3>
+        <p class="muted">Your study materials, subjects and progress in one place.</p>
+      </div>
+      <div class="motivation">
+        <div class="motivation-icon"><i class="fa-solid fa-seedling"></i></div>
+        <div>
+          <h3>Stay consistent</h3>
+          <p class="muted">Small steps make big progress.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section class="page-view active" id="page-dashboard">
+
+      <div class="section-head">
+        <h2>Your Subjects</h2>
+        <button class="text-btn" onclick="showPage('subjects')">View All Subjects →</button>
+      </div>
+
+      <div class="subject-grid" id="dashboardSubjects"></div>
+
+      <div class="dashboard-grid">
+
+        <section class="panel glass materials-panel">
+          <div class="panel-head">
+            <h2>Recent Study Materials</h2>
+            <button class="text-btn" onclick="showPage('materials')">View All →</button>
+          </div>
+          <div id="recentMaterials"></div>
+        </section>
+
+        <section class="panel glass">
+          <div class="panel-head">
+            <h2>Study Progress</h2>
+            <span class="muted">Overall</span>
+          </div>
+          <div class="progress-ring">
+            <div class="progress-value">
+              <strong id="progressPercent">0%</strong>
+              <span>Completed</span>
+            </div>
+          </div>
+          <div class="progress-label">
+            <span class="dot"></span><span>Completed</span>
+            <div class="progress-line"><span id="completedBar" style="width:0%"></span></div>
+            <strong id="completedCount">0</strong>
+          </div>
+          <div class="progress-label">
+            <span class="dot" style="background:#55baff"></span><span>In progress</span>
+            <div class="progress-line"><span id="progressBar" style="width:0%"></span></div>
+            <strong id="progressCount">0</strong>
+          </div>
+          <div class="progress-label">
+            <span class="dot" style="background:#ffa52e"></span><span>Not started</span>
+            <div class="progress-line"><span id="pendingBar" style="width:0%;background:#ffa52e"></span></div>
+            <strong id="pendingCount">0</strong>
+          </div>
+        </section>
+
+        <section class="panel glass">
+          <div class="panel-head">
+            <h2>Upcoming Tasks</h2>
+            <button class="text-btn" onclick="showPage('planner')">View All →</button>
+          </div>
+          <div id="upcomingTasks"></div>
+          <button class="primary-btn" style="width:100%;margin-top:13px"
+            onclick="openTaskModal()">
+            <i class="fa-solid fa-plus"></i> Add Study Task
+          </button>
+        </section>
+
+      </div>
+    </section>
+
+    <!-- SUBJECT FOLDERS -->
+    <section class="page-view" id="page-subjects">
+      <div class="section-head">
+        <h2>My Subject Folders</h2>
+        <button class="secondary-btn" onclick="loadClassroom()">Sync Classroom</button>
+      </div>
+      <p class="muted">Select a subject to see its assignments and study materials.</p>
+      <div class="subject-folder-list" id="allSubjects"></div>
+    </section>
+
+    <!-- MATERIALS -->
+    <section class="page-view" id="page-materials">
+      <div class="section-head">
+        <h2 id="materialHeading">Study Materials</h2>
+        <button class="secondary-btn" onclick="selectedSubject=null;renderMaterials()">All Subjects</button>
+      </div>
+      <div class="toolbar">
+        <input id="materialSearch" placeholder="Search PDF, notes, resources...">
+        <select id="materialFilter">
+          <option value="all">All materials</option>
+          <option value="pending">Not completed</option>
+          <option value="done">Completed</option>
+        </select>
+      </div>
+      <div class="panel glass" id="materialsList"></div>
+    </section>
+
+    <!-- ASSIGNMENTS -->
+    <section class="page-view" id="page-assignments">
+      <div class="section-head">
+        <h2>Assignments</h2>
+        <button class="primary-btn" onclick="openAssignmentModal()">
+          <i class="fa-solid fa-plus"></i> Add Assignment
+        </button>
+      </div>
+      <div class="toolbar">
+        <input id="assignmentSearch" placeholder="Search assignments...">
+        <select id="assignmentFilter">
+          <option value="all">All assignments</option>
+          <option value="pending">Pending</option>
+          <option value="done">Completed</option>
+        </select>
+      </div>
+      <div class="panel glass" id="assignmentsList"></div>
+    </section>
+
+    <!-- PLANNER -->
+    <section class="page-view" id="page-planner">
+      <div class="section-head">
+        <h2>Study Planner</h2>
+        <button class="primary-btn" onclick="openTaskModal()">
+          <i class="fa-solid fa-plus"></i> New Task
+        </button>
+      </div>
+      <div class="panel glass" id="plannerList"></div>
+    </section>
+
+    <!-- CLASSROOM -->
+    <section class="page-view" id="page-classroom">
+      <div class="section-head">
+        <h2>Google Classroom</h2>
+      </div>
+      <div class="panel glass">
+        <div class="subject-top">
+          <div class="subject-icon" style="background:#e1efff;color:#347dff">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div>
+            <h2>Connect your classroom</h2>
+            <p class="muted">Sync your courses, assignments and available course materials.</p>
+          </div>
+        </div>
+        <div class="status-message" id="classroomStatus">
+          Classroom connection status will appear here.
+        </div>
+        <button class="primary-btn" onclick="connectClassroom()">
+          <i class="fa-brands fa-google"></i> Connect Google Classroom
+        </button>
+        <button class="secondary-btn" onclick="loadClassroom()">Sync Now</button>
+        <div id="classroomCourses" style="margin-top:20px"></div>
+        <div class="section-head" style="margin-top:24px"><h2>Classroom Announcements</h2></div>
+        <div id="classroomAnnouncements" class="classroom-announcements"></div>
+      </div>
+    </section>
+
+    <!-- NOTES -->
+    <section class="page-view" id="page-notes">
+      <div class="section-head">
+        <h2>My Notes</h2>
+      </div>
+      <div class="panel glass">
+        <div class="form-group">
+          <label for="noteSubject">Subject</label>
+          <select id="noteSubject"></select>
+        </div>
+        <div class="form-group">
+          <label for="noteTitle">Note title</label>
+          <input id="noteTitle" placeholder="e.g. Unit 2 important points">
+        </div>
+        <div class="form-group">
+          <label for="noteBody">Your notes</label>
+          <textarea id="noteBody" placeholder="Write your study notes here..."></textarea>
+        </div>
+        <button class="primary-btn" onclick="saveNote()">Save Note</button>
+        <div id="notesList" style="margin-top:18px"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<nav class="mobile-nav glass">
+  <button class="active" data-page="dashboard"><i class="fa-solid fa-house"></i>Home</button>
+  <button data-page="subjects"><i class="fa-regular fa-folder"></i>Subjects</button>
+  <button data-page="materials"><i class="fa-regular fa-file-lines"></i>Materials</button>
+  <button data-page="assignments"><i class="fa-regular fa-clipboard"></i>Tasks</button>
+  <button data-page="planner"><i class="fa-regular fa-calendar"></i>Planner</button>
+</nav>
+
+<!-- ASSIGNMENT MODAL -->
+<div class="modal" id="assignmentModal" role="dialog" aria-modal="true" aria-label="Add assignment">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>Add Assignment</h2>
+      <button class="close-btn" onclick="closeModal('assignmentModal')" aria-label="Close">✕</button>
+    </div>
+    <form id="assignmentForm">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Assignment title</label>
+          <input class="form-control" name="title" required placeholder="Assignment title">
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select class="form-control" name="subject" id="assignmentSubject" required></select>
+        </div>
+        <div class="form-group">
+          <label>Due date</label>
+          <input class="form-control" name="dueDate" type="date">
+        </div>
+        <div class="form-group full">
+          <label>Description</label>
+          <textarea name="description" placeholder="Assignment details"></textarea>
+        </div>
+      </div>
+      <button class="primary-btn" type="submit">Save Assignment</button>
+    </form>
+  </div>
+</div>
+
+<!-- TASK MODAL -->
+<div class="modal" id="taskModal" role="dialog" aria-modal="true" aria-label="Add study task">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>Add Study Task</h2>
+      <button class="close-btn" onclick="closeModal('taskModal')" aria-label="Close">✕</button>
+    </div>
+    <form id="taskForm">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Task title</label>
+          <input class="form-control" name="title" required placeholder="e.g. Revise DSA Unit 3">
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select class="form-control" name="subject" id="taskSubject" required></select>
+        </div>
+        <div class="form-group">
+          <label>Due date</label>
+          <input class="form-control" name="dueDate" type="date">
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select class="form-control" name="priority">
+            <option>Medium</option>
+            <option>High</option>
+            <option>Low</option>
+          </select>
+        </div>
+      </div>
+      <button class="primary-btn" type="submit">Save Task</button>
+    </form>
+  </div>
+</div>
+
+<!-- PDF / RESOURCE PREVIEW -->
+<div class="modal" id="previewModal" role="dialog" aria-modal="true" aria-label="Study material preview">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 id="previewTitle">Study Material</h2>
+      <button class="close-btn" onclick="closeModal('previewModal')" aria-label="Close">✕</button>
+    </div>
+    <div id="previewContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/*
+  CLASSCONNECT CONFIGURATION
+
+  Use your existing Firebase web configuration.
+  Keep server secrets (OAuth client secret / MySQL password)
+  out of this frontend file.
+
+  API_BASE should point to your deployed backend.
+*/
+const API_BASE = "https://classconnect-uw4e.onrender.com/api";
+
+/*
+  Firebase is optional for the initial UI preview.
+  For authenticated API requests, configure Firebase Auth and
+  ensure your backend verifies the Firebase ID token.
+*/
+const firebaseConfig = {
+  apiKey: "AIzaSyANyFw8l3efaykZf3q8AaTW8yctOoezIzo",
+  authDomain: "classconnect-42a51.firebaseapp.com",
+  projectId: "classconnect-42a51",
+  appId: "1:899645718197:web:425e1dbcc178f5b94e08fc"
+};
+
+const subjects = [
+  {name:"Artificial Intelligence",code:"TE AIML301",icon:"fa-brain",color:"#e0ebff",ink:"#2778fa"},
+  {name:"Data Structures",code:"TE AIML302",icon:"fa-diagram-project",color:"#fff0dc",ink:"#ff8a12"},
+  {name:"Operating Systems",code:"TE AIML303",icon:"fa-microchip",color:"#dff9f0",ink:"#12b88c"},
+  {name:"Web & Mobile App Development",code:"TE AIML304",icon:"fa-laptop-mobile",color:"#eee4ff",ink:"#9653ff"},
+  {name:"Discrete Mathematics",code:"TE AIML305",icon:"fa-sigma",color:"#ffe6f6",ink:"#d84fb5"},
+  {name:"Computer Networks",code:"TE AIML306",icon:"fa-tower-broadcast",color:"#ddf9fa",ink:"#0eacb3"},
+  {name:"Software Engineering",code:"TE AIML307",icon:"fa-code-branch",color:"#e8e9ff",ink:"#6a6fea"},
+  {name:"Machine Learning",code:"TE AIML308",icon:"fa-robot",color:"#ffe8e0",ink:"#f07853"}
+];
+
+let materials = [];
+let assignments = [];
+let tasks = [];
+let notes = [];
+let selectedSubject = null;
+let currentUser = null;
+let classroomConnected = false;
+
+const materialProgress = new Set();
+
+const $ = id => document.getElementById(id);
+
+function escapeHTML(value="") {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[c]);
+}
+
+function toast(message) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => el.classList.remove("show"), 3000);
+}
+
+function showPage(page) {
+  document.querySelectorAll(".page-view").forEach(el =>
+    el.classList.toggle("active", el.id === "page-" + page)
+  );
+
+  document.querySelectorAll("[data-page]").forEach(btn =>
+    btn.classList.toggle("active", btn.dataset.page === page)
+  );
+
+  const titles = {
+    dashboard:"Student Dashboard",
+    subjects:"My Subjects",
+    materials:"Study Materials",
+    assignments:"Assignments",
+    planner:"Study Planner",
+    classroom:"Google Classroom",
+    notes:"My Notes"
+  };
+
+  $("pageTitle").textContent = titles[page] || "ClassConnect";
+  if (page === "materials") renderMaterials();
+  if (page === "assignments") renderAssignments();
+  if (page === "planner") renderTasks();
+  if (page === "notes") renderNotes();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll("[data-page]").forEach(btn => {
+  btn.addEventListener("click", () => showPage(btn.dataset.page));
+});
+
+function subjectFor(name) {
+  const lower = String(name || "").toLowerCase();
+  return subjects.find(s =>
+    lower.includes(s.name.toLowerCase()) ||
+    lower.includes(s.code.toLowerCase()) ||
+    (lower.includes("dsa") && s.name === "Data Structures") ||
+    (lower.includes("os") && s.name === "Operating Systems") ||
+    (lower.includes("math") && s.name === "Discrete Mathematics") ||
+    (lower.includes("w&mad") && s.name === "Web & Mobile App Development")
+  ) || {name:name || "Other",code:"Classroom course",icon:"fa-folder",color:"#e8f0ff",ink:"#3987ff"};
+}
+
+function makeSubjectCard(subject) {
+  const count = materials.filter(m => m.subject === subject.name).length;
+  const card = document.createElement("article");
+  card.className = "subject-card glass";
+  card.tabIndex = 0;
+  card.setAttribute("role","button");
+  card.setAttribute("aria-label","Open " + subject.name + " folder");
+
+  card.innerHTML = `
+    <div class="subject-top">
+      <div class="subject-icon" style="background:${subject.color};color:${subject.ink}">
+        <i class="fa-solid ${subject.icon}"></i>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="subject-name">${escapeHTML(subject.name)}</div>
+        <div class="subject-code">${escapeHTML(subject.code)}</div>
+        <div class="muted" style="margin-top:10px">${count} materials</div>
+      </div>
+      <i class="fa-solid fa-chevron-right" style="color:#6986ac"></i>
+    </div>
+    <div class="subject-bottom">
+      <span class="muted">Open folder</span>
+      <div class="file-badges">
+        <span class="file-badge"><i class="fa-solid fa-file-pdf" style="color:#f04444"></i></span>
+        <span class="file-badge"><i class="fa-solid fa-file-lines"></i></span>
+        <span class="file-badge"><i class="fa-solid fa-link"></i></span>
+      </div>
+    </div>`;
+
+  const open = () => {
+    selectedSubject = subject.name;
+    $("materialHeading").textContent = subject.name + " — Materials";
+    $("materialSearch").value = "";
+    $("materialFilter").value = "all";
+    renderMaterials();
+    showPage("materials");
+  };
+
+  card.addEventListener("click", open);
+  card.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      open();
+    }
+  });
+  return card;
+}
+
+function renderSubjects() {
+  const dash = $("dashboardSubjects");
+  const all = $("allSubjects");
+  dash.replaceChildren();
+  all.replaceChildren();
+
+  subjects.slice(0,6).forEach(s => dash.appendChild(makeSubjectCard(s)));
+  subjects.forEach(s => all.appendChild(makeSubjectCard(s)));
+
+  ["assignmentSubject","taskSubject","noteSubject"].forEach(id => {
+    const select = $(id);
+    const previous = select.value;
+    select.innerHTML = subjects.map(s =>
+      `<option value="${escapeHTML(s.name)}">${escapeHTML(s.name)}</option>`
+    ).join("");
+    if (previous) select.value = previous;
+  });
+}
+
+function isDone(material) {
+  return materialProgress.has(String(material.id));
+}
+
+function renderMaterials() {
+  const query = ($("materialSearch")?.value || $("globalSearch").value).toLowerCase().trim();
+  const filter = $("materialFilter").value;
+
+  const filtered = materials.filter(m => {
+    const matchesSubject = !selectedSubject || m.subject === selectedSubject;
+    const matchesQuery = !query || [m.title,m.subject,m.type].some(v =>
+      String(v || "").toLowerCase().includes(query)
+    );
+    const done = isDone(m);
+    const matchesStatus = filter === "all" ||
+      (filter === "done" && done) || (filter === "pending" && !done);
+    return matchesSubject && matchesQuery && matchesStatus;
+  });
+
+  const container = $("materialsList");
+  container.replaceChildren();
+
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty">
+      <i class="fa-regular fa-folder-open" style="font-size:30px"></i>
+      <p>No materials found in this folder.</p>
+      <p>Sync Google Classroom to fetch available course materials.</p>
+    </div>`;
+    return;
+  }
+
+  filtered.forEach(m => {
+    const row = document.createElement("div");
+    row.className = "material-row";
+    const pdf = /pdf/i.test((m.title || "") + " " + (m.type || ""));
+    row.innerHTML = `
+      <div class="file-icon" style="${pdf?'background:#fff0f0;color:#ef4545':''}">
+        <i class="fa-solid ${pdf?'fa-file-pdf':'fa-file-lines'}"></i>
+      </div>
+      <div class="material-info">
+        <h3>${escapeHTML(m.title)}</h3>
+        <p>${escapeHTML(m.subject)} · ${isDone(m)?"Completed":"Not completed"}</p>
+      </div>
+      <button class="small-btn preview-btn">Preview</button>
+      <button class="close-btn done-btn" title="Toggle completed" aria-label="Toggle completed">
+        <i class="fa-solid ${isDone(m)?"fa-check":"fa-circle"}"></i>
+      </button>`;
+
+    row.querySelector(".preview-btn").onclick = () => previewMaterial(m);
+    row.querySelector(".done-btn").onclick = () => toggleMaterial(m);
+    container.appendChild(row);
+  });
+}
+
+function renderRecentMaterials() {
+  const container = $("recentMaterials");
+  container.replaceChildren();
+
+  const recent = materials.slice(0,5);
+  if (!recent.length) {
+    container.innerHTML = `<div class="empty">Connect Google Classroom to load your actual materials here.</div>`;
+    return;
+  }
+
+  recent.forEach(m => {
+    const row = document.createElement("div");
+    row.className = "material-row";
+    row.innerHTML = `
+      <div class="file-icon"><i class="fa-solid fa-file-lines"></i></div>
+      <div class="material-info">
+        <h3>${escapeHTML(m.title)}</h3>
+        <p>${escapeHTML(m.subject)}</p>
+      </div>
+      <button class="small-btn">Preview</button>`;
+    row.querySelector("button").onclick = () => previewMaterial(m);
+    container.appendChild(row);
+  });
+}
+
+function previewMaterial(material) {
+  $("previewTitle").textContent = material.title || "Study Material";
+  const url = safeURL(material.url || material.alternateLink || material.webViewLink);
+
+  if (url && /\.pdf(?:$|[?#])/i.test(url)) {
+    $("previewContent").innerHTML = `
+      <iframe class="pdf-frame" title="PDF preview" src="${escapeHTML(url)}"></iframe>
+      <p class="muted">If the PDF cannot be previewed, open it directly from its source.</p>
+      <a class="primary-btn" href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Open PDF ↗</a>`;
+  } else if (url) {
+    $("previewContent").innerHTML = `
+      <div class="status-message">This resource may require Google sign-in or permission from your teacher.</div>
+      <a class="primary-btn" href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">
+        Open Resource ↗
+      </a>`;
+  } else {
+    $("previewContent").innerHTML = `
+      <div class="empty">No direct preview link is available for this item.</div>`;
+  }
+
+  openModal("previewModal");
+}
+
+function safeURL(value) {
+  if (!value) return "";
+  try {
+    const url = new URL(value, window.location.href);
+    if (url.protocol === "https:" || url.protocol === "http:") return url.href;
+  } catch (_) {}
+  return "";
+}
+
+async function toggleMaterial(material) {
+  const id = String(material.id);
+  if (materialProgress.has(id)) materialProgress.delete(id);
+  else materialProgress.add(id);
+
+  saveLocal();
+  renderMaterials();
+  renderProgress();
+  toast("Material status updated.");
+
+  // If the backend study-progress endpoint is configured, sync it.
+  try {
+    await apiRequest("/study/material-progress", {
+      method:"PUT",
+      body:JSON.stringify({
+        materialId: material.id,
+        courseId: material.courseId,
+        completed: materialProgress.has(id)
+      })
+    });
+  } catch (_) {
+    // Local UI still works, but server persistence needs a compatible route.
+  }
+}
+
+function renderProgress() {
+  const total = materials.length;
+  const done = materials.filter(isDone).length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  const pending = total - done;
+
+  $("progressPercent").textContent = pct + "%";
+  $("completedCount").textContent = done;
+  $("progressCount").textContent = 0;
+  $("pendingCount").textContent = pending;
+  $("completedBar").style.width = pct + "%";
+  $("progressBar").style.width = "0%";
+  $("pendingBar").style.width = (100-pct) + "%";
+  $("progressRing");
+  document.querySelector(".progress-ring").style.background =
+    `conic-gradient(#20c9a2 0 ${pct}%,#e5effb ${pct}% 100%)`;
+}
+
+function renderAssignments() {
+  const container = $("assignmentsList");
+  const query = $("assignmentSearch").value.toLowerCase().trim();
+  const filter = $("assignmentFilter").value;
+
+  const list = assignments.filter(a => {
+    const done = Boolean(a.completed);
+    const matchQuery = !query || [a.title,a.subject,a.description].some(v =>
+      String(v || "").toLowerCase().includes(query)
+    );
+    return matchQuery && (filter === "all" ||
+      (filter === "done" && done) || (filter === "pending" && !done));
+  });
+
+  container.replaceChildren();
+
+  if (!list.length) {
+    container.innerHTML = `<div class="empty">No assignments found. Add one or sync Google Classroom.</div>`;
+    return;
+  }
+
+  list.forEach(a => {
+    const row = document.createElement("div");
+    row.className = "task-row";
+    const due = formatDate(a.dueDate || a.dueDateTime || a.due);
+    row.innerHTML = `
+      <input type="checkbox" ${a.completed?"checked":""} aria-label="Mark assignment completed">
+      <div class="task-content">
+        <strong>${escapeHTML(a.title || "Assignment")}</strong>
+        <span>${escapeHTML(a.subject || "Course")} · Due: ${escapeHTML(due)}</span>
+        ${a.description?`<span>${escapeHTML(a.description)}</span>`:""}
+      </div>
+      <button class="small-btn open-assignment">Open ↗</button>`;
+
+    row.querySelector('input[type="checkbox"]').onchange = () => toggleAssignment(a);
+    row.querySelector(".open-assignment").onclick = () => {
+      const url = safeURL(a.alternateLink || a.url || a.webViewLink);
+      if (url) window.open(url,"_blank","noopener,noreferrer");
+      else toast("No Google Classroom link is available for this assignment.");
+    };
+    container.appendChild(row);
+  });
+}
+
+function formatDate(value) {
+  if (!value) return "No due date";
+
+  // Classroom due dates can arrive as {year, month, day}.
+  if (typeof value === "object" && value !== null) {
+    const year = Number(value.year);
+    const month = Number(value.month);
+    const day = Number(value.day);
+    if (year && month && day) {
+      return new Date(year,month-1,day).toLocaleDateString("en-IN",{
+        day:"numeric",month:"short",year:"numeric"
+      });
+    }
+    if (value.dateTime) value = value.dateTime;
+    else return "No due date";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "No due date";
+
+  return date.toLocaleDateString("en-IN",{
+    day:"numeric",month:"short",year:"numeric"
+  });
+}
+
+async function toggleAssignment(assignment) {
+  assignment.completed = !assignment.completed;
+  saveLocal();
+  renderAssignments();
+  renderTasks();
+  renderDashboardTasks();
+  toast("Assignment status updated.");
+
+  try {
+    await apiRequest("/assignments/" + encodeURIComponent(assignment.id), {
+      method:"PATCH",
+      body:JSON.stringify({completed:assignment.completed})
+    });
+  } catch (_) {
+    // If the backend does not support this route, status remains local.
+  }
+}
+
+function renderTasks() {
+  const container = $("plannerList");
+  container.replaceChildren();
+
+  if (!tasks.length) {
+    container.innerHTML = `<div class="empty">Your planner is empty. Add your first study task.</div>`;
+    return;
+  }
+
+  tasks.forEach(task => {
+    const row = document.createElement("div");
+    row.className = "task-row";
+    row.innerHTML = `
+      <input type="checkbox" ${task.completed?"checked":""} aria-label="Complete task">
+      <div class="task-content">
+        <strong>${escapeHTML(task.title)}</strong>
+        <span>${escapeHTML(task.subject)} · ${escapeHTML(formatDate(task.dueDate))}</span>
+      </div>
+      <span class="pill">${escapeHTML(task.priority || "Medium")}</span>
+      <button class="close-btn" aria-label="Delete task"><i class="fa-solid fa-trash"></i></button>`;
+
+    row.querySelector('input[type="checkbox"]').onchange = () => {
+      task.completed = !task.completed;
+      saveLocal();
+      renderTasks();
+      renderDashboardTasks();
     };
 
-    const API_BASE = "https://classconnect-uw4e.onrender.com/api";
+    row.querySelector("button").onclick = () => {
+      tasks = tasks.filter(t => t.id !== task.id);
+      saveLocal();
+      renderTasks();
+      renderDashboardTasks();
+      toast("Task deleted.");
+    };
+    container.appendChild(row);
+  });
+}
 
-    if (typeof firebase === "undefined") {
-      document.getElementById("auth-message").textContent =
-        "Firebase failed to load. Check your internet connection.";
-      throw new Error("Firebase SDK unavailable");
+function renderDashboardTasks() {
+  const container = $("upcomingTasks");
+  container.replaceChildren();
+
+  const upcoming = [
+    ...tasks.map(t => ({...t,kind:"Study task"})),
+    ...assignments.map(a => ({...a,kind:"Assignment",dueDate:a.dueDate || a.dueDateTime}))
+  ].filter(t => !t.completed)
+   .sort((a,b) => new Date(a.dueDate || "2999-01-01") - new Date(b.dueDate || "2999-01-01"))
+   .slice(0,4);
+
+  if (!upcoming.length) {
+    container.innerHTML = `<div class="empty">No upcoming tasks. You're all caught up!</div>`;
+    return;
+  }
+
+  upcoming.forEach(task => {
+    const row = document.createElement("div");
+    row.className = "task-row";
+    row.innerHTML = `
+      <div class="file-icon" style="width:34px;height:36px;font-size:12px">
+        <i class="fa-regular fa-calendar"></i>
+      </div>
+      <div class="task-content">
+        <strong>${escapeHTML(task.title)}</strong>
+        <span>${escapeHTML(task.subject || task.kind)} · ${escapeHTML(formatDate(task.dueDate))}</span>
+      </div>`;
+    container.appendChild(row);
+  });
+}
+
+function renderNotes() {
+  const container = $("notesList");
+  container.replaceChildren();
+
+  if (!notes.length) {
+    container.innerHTML = `<div class="empty">Your saved notes will appear here.</div>`;
+    return;
+  }
+
+  notes.forEach(note => {
+    const card = document.createElement("article");
+    card.className = "material-row";
+    card.innerHTML = `
+      <div class="file-icon"><i class="fa-regular fa-note-sticky"></i></div>
+      <div class="material-info">
+        <h3>${escapeHTML(note.title)}</h3>
+        <p>${escapeHTML(note.subject)}</p>
+        <p style="white-space:pre-wrap">${escapeHTML(note.body)}</p>
+      </div>
+      <button class="close-btn" aria-label="Delete note"><i class="fa-solid fa-trash"></i></button>`;
+
+    card.querySelector("button").onclick = () => {
+      notes = notes.filter(n => n.id !== note.id);
+      saveLocal();
+      renderNotes();
+    };
+    container.appendChild(card);
+  });
+}
+
+function openModal(id) {
+  $(id).classList.add("open");
+}
+
+function closeModal(id) {
+  $(id).classList.remove("open");
+}
+
+function openAssignmentModal() {
+  openModal("assignmentModal");
+}
+
+function openTaskModal() {
+  openModal("taskModal");
+}
+
+document.querySelectorAll(".modal").forEach(modal => {
+  modal.addEventListener("click", e => {
+    if (e.target === modal) modal.classList.remove("open");
+  });
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    document.querySelectorAll(".modal.open").forEach(m => m.classList.remove("open"));
+  }
+});
+
+$("assignmentForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = new FormData(e.currentTarget);
+  const assignment = {
+    id:"local-assignment-" + Date.now(),
+    title:String(form.get("title")).trim(),
+    subject:String(form.get("subject")),
+    dueDate:String(form.get("dueDate") || ""),
+    description:String(form.get("description") || ""),
+    completed:false
+  };
+
+  if (!assignment.title) return;
+
+  assignments.unshift(assignment);
+  saveLocal();
+  renderAssignments();
+  renderDashboardTasks();
+  closeModal("assignmentModal");
+  e.currentTarget.reset();
+  toast("Assignment added.");
+
+  try {
+    const result = await apiRequest("/assignments",{
+      method:"POST",
+      body:JSON.stringify(assignment)
+    });
+    if (result && result.id) {
+      assignment.id = result.id;
+      saveLocal();
+      renderAssignments();
+    }
+  } catch (_) {
+    // Local copy works; server persistence requires a compatible endpoint.
+  }
+});
+
+$("taskForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = new FormData(e.currentTarget);
+
+  const task = {
+    id:"local-task-" + Date.now(),
+    title:String(form.get("title")).trim(),
+    subject:String(form.get("subject")),
+    dueDate:String(form.get("dueDate") || ""),
+    priority:String(form.get("priority") || "Medium"),
+    completed:false
+  };
+
+  tasks.unshift(task);
+  saveLocal();
+  renderTasks();
+  renderDashboardTasks();
+  closeModal("taskModal");
+  e.currentTarget.reset();
+  toast("Study task added.");
+
+  try {
+    const result = await apiRequest("/study/planner",{
+      method:"POST",
+      body:JSON.stringify(task)
+    });
+    if (result && result.id) {
+      task.id = result.id;
+      saveLocal();
+      renderTasks();
+    }
+  } catch (_) {
+    // Server persistence requires the study planner route.
+  }
+});
+
+function saveNote() {
+  const title = $("noteTitle").value.trim();
+  const body = $("noteBody").value.trim();
+  const subject = $("noteSubject").value;
+
+  if (!title || !body) {
+    toast("Enter a note title and its content.");
+    return;
+  }
+
+  notes.unshift({
+    id:"note-" + Date.now(),
+    title,body,subject
+  });
+
+  $("noteTitle").value = "";
+  $("noteBody").value = "";
+  saveLocal();
+  renderNotes();
+  toast("Note saved on this device.");
+}
+
+function saveLocal() {
+  try {
+    localStorage.setItem("cc-v2-materials",JSON.stringify(materials));
+    localStorage.setItem("cc-v2-assignments",JSON.stringify(assignments));
+    localStorage.setItem("cc-v2-tasks",JSON.stringify(tasks));
+    localStorage.setItem("cc-v2-notes",JSON.stringify(notes));
+    localStorage.setItem("cc-v2-progress",[...materialProgress].join("|"));
+  } catch (_) {
+    toast("Browser storage is unavailable.");
+  }
+}
+
+function restoreLocal() {
+  try {
+    materials = JSON.parse(localStorage.getItem("cc-v2-materials") || "[]");
+    assignments = JSON.parse(localStorage.getItem("cc-v2-assignments") || "[]");
+    tasks = JSON.parse(localStorage.getItem("cc-v2-tasks") || "[]");
+    notes = JSON.parse(localStorage.getItem("cc-v2-notes") || "[]");
+    (localStorage.getItem("cc-v2-progress") || "")
+      .split("|").filter(Boolean).forEach(id => materialProgress.add(id));
+  } catch (_) {
+    materials = [];
+    assignments = [];
+    tasks = [];
+    notes = [];
+  }
+}
+
+async function getFirebaseToken() {
+  if (window.firebase?.auth) {
+    const user = firebase.auth().currentUser;
+    if (user) return user.getIdToken();
+  }
+  return null;
+}
+
+async function apiRequest(path, options={}) {
+  const token = await getFirebaseToken();
+  const response = await fetch(API_BASE + path, {
+    ...options,
+    headers:{
+      "Content-Type":"application/json",
+      ...(token ? {Authorization:"Bearer " + token} : {}),
+      ...(options.headers || {})
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error("API request failed: " + response.status);
+  }
+
+  const text = await response.text();
+  return text ? JSON.parse(text) : {};
+}
+
+async function connectClassroom() {
+  try {
+    const result = await apiRequest("/classroom/connect");
+    const url = result.url || result.authUrl || result.authorizationUrl;
+
+    if (url) {
+      window.location.href = url;
+      return;
     }
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    $("classroomStatus").textContent =
+      "The backend did not return an authorization URL. Check the Classroom OAuth route.";
+  } catch (error) {
+    $("classroomStatus").textContent =
+      "Could not start Classroom connection. Check your backend route and sign-in status.";
+    toast("Classroom connection could not start.");
+  }
+}
 
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const $ = id => document.getElementById(id);
+async function loadClassroom() {
+  $("classroomStatus").textContent = "Connecting to ClassConnect server…";
 
-    let authMode = "login";
-    let assignments = [];
-    let loadingAssignments = false;
-    let authGeneration = 0;
+  try {
+    const result = await apiRequest("/classroom/data");
 
-    function authMessage(message, success = false) {
-      $("auth-message").textContent = message;
-      $("auth-message").style.color = success ? "#86efac" : "#fda4af";
-    }
+    const courses = result.courses || result.data?.courses || [];
+    const coursework = result.courseWork || result.coursework ||
+      result.assignments || result.data?.courseWork || [];
+    const announcements = result.announcements || result.data?.announcements || [];
+    const courseMaterials = result.courseWorkMaterials ||
+      result.materials || result.data?.courseWorkMaterials || [];
 
-    function setMode(mode) {
-      authMode = mode;
+    classroomConnected = true;
+    $("classroomStatus").textContent =
+      `Classroom sync complete: ${courses.length} courses, ${coursework.length} assignments, ${courseMaterials.length} course materials and ${announcements.length} announcements received.`;
 
-      $("auth-heading").textContent =
-        mode === "signup" ? "Create your account" : "Welcome back";
+    const courseMap = new Map(courses.map(c => [String(c.id),c]));
 
-      $("auth-subtitle").textContent =
-        mode === "signup"
-          ? "Create your ClassConnect student account."
-          : "Sign in to continue to your student workspace.";
-
-      $("login-button").textContent =
-        mode === "signup" ? "Create account" : "Sign in";
-
-      $("signup-button").textContent =
-        mode === "signup" ? "Back to sign in" : "Create a student account";
-
-      $("auth-password").autocomplete =
-        mode === "signup" ? "new-password" : "current-password";
-
-      authMessage("");
-    }
-
-    $("signup-button").addEventListener("click", () => {
-      setMode(authMode === "login" ? "signup" : "login");
-    });
-
-    $("auth-form").addEventListener("submit", async event => {
-      event.preventDefault();
-
-      const email = $("auth-email").value.trim();
-      const password = $("auth-password").value;
-      const button = $("login-button");
-
-      if (!email || password.length < 6) {
-        authMessage("Enter a valid email and a password of at least 6 characters.");
-        return;
-      }
-
-      button.disabled = true;
-      $("signup-button").disabled = true;
-      $("forgot-password").disabled = true;
-
-      try {
-        if (authMode === "signup") {
-          const result = await auth.createUserWithEmailAndPassword(email, password);
-
-          try {
-            await db.collection("users").doc(result.user.uid).set({
-              email: result.user.email,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
-          } catch (error) {
-            console.error("Firestore profile error:", error);
-          }
-
-          authMessage("Account created successfully!", true);
-        } else {
-          await auth.signInWithEmailAndPassword(email, password);
-          authMessage("Login successful!", true);
-        }
-      } catch (error) {
-        console.error("Firebase authentication error:", error);
-
-        const messages = {
-          "auth/email-already-in-use": "This email is already registered. Please sign in.",
-          "auth/invalid-email": "Enter a valid email address.",
-          "auth/weak-password": "Choose a stronger password.",
-          "auth/user-not-found": "Account not found. Create an account first.",
-          "auth/wrong-password": "Incorrect email or password.",
-          "auth/invalid-credential": "Incorrect email or password.",
-          "auth/operation-not-allowed": "Enable Email/Password in Firebase Authentication.",
-          "auth/network-request-failed": "Check your internet connection.",
-          "auth/too-many-requests": "Too many attempts. Try again later."
-        };
-
-        authMessage(messages[error.code] || error.message);
-      } finally {
-        button.disabled = false;
-        $("signup-button").disabled = false;
-        $("forgot-password").disabled = false;
-      }
-    });
-
-    $("forgot-password").addEventListener("click", async () => {
-      const email = $("auth-email").value.trim();
-
-      if (!email) {
-        authMessage("Enter your email address first.");
-        $("auth-email").focus();
-        return;
-      }
-
-      try {
-        await auth.sendPasswordResetEmail(email);
-        authMessage("If the account exists, a reset email has been sent.", true);
-      } catch (error) {
-        console.error("Password reset error:", error);
-
-        authMessage(
-          error.code === "auth/invalid-email"
-            ? "Enter a valid email address."
-            : error.code === "auth/too-many-requests"
-            ? "Too many attempts. Try again later."
-            : error.message
-        );
-      }
-    });
-
-    $("logout-button").addEventListener("click", async () => {
-      try {
-        await auth.signOut();
-        $("auth-password").value = "";
-        setMode("login");
-      } catch (error) {
-        console.error("Logout error:", error);
-        alert("Logout failed: " + error.message);
-      }
-    });
-
-    // API helper: sends Firebase login token and displays the real server error.
-    async function apiRequest(path, options = {}) {
-      const user = auth.currentUser;
-
-      if (!user) {
-        throw new Error("Please sign in first.");
-      }
-
-      const token = await user.getIdToken();
-
-      const headers = {
-        ...(options.headers || {}),
-        Authorization: `Bearer ${token}`
+    const convertedAssignments = coursework.map(a => {
+      const course = courseMap.get(String(a.courseId));
+      return {
+        id:String(a.id),
+        title:a.title || "Classroom assignment",
+        subject:course?.name || "Google Classroom",
+        dueDate:a.dueDate || a.dueDateTime || "",
+        description:a.description || "",
+        alternateLink:a.alternateLink || "",
+        completed:false,
+        source:"classroom"
       };
-
-      if (options.body !== undefined) {
-        headers["Content-Type"] = "application/json";
-      }
-
-      let response;
-
-      try {
-        response = await fetch(`${API_BASE}${path}`, {
-          ...options,
-          headers
-        });
-      } catch (error) {
-        throw new Error(
-          "Could not reach the ClassConnect server. Check the Render backend and internet connection."
-        );
-      }
-
-      const responseText = await response.text();
-      let data = {};
-
-      if (responseText) {
-        try {
-          data = JSON.parse(responseText);
-        } catch {
-          data = { message: responseText };
-        }
-      }
-
-      if (!response.ok) {
-        const detail = data.error || data.message || data.details;
-
-        throw new Error(
-          detail
-            ? `${detail} (HTTP ${response.status})`
-            : `Request failed with HTTP ${response.status}.`
-        );
-      }
-
-      return data;
-    }
-
-    // GOOGLE CLASSROOM INTEGRATION
-
-    async function checkClassroomStatus() {
-      const status = $("classroom-status");
-      const message = $("classroom-message");
-      const connectButton = $("classroom-connect-button");
-      const disconnectButton = $("classroom-disconnect-button");
-
-      if (!auth.currentUser) {
-        status.textContent = "Sign in required";
-        message.textContent = "Sign in to check your Google Classroom connection.";
-        connectButton.hidden = false;
-        disconnectButton.hidden = true;
-        return;
-      }
-
-      status.textContent = "Checking...";
-      message.textContent = "Checking your Google Classroom connection...";
-      connectButton.disabled = true;
-
-      try {
-        const result = await apiRequest("/classroom/status");
-
-        if (result.connected) {
-          status.textContent = "Connected";
-          message.textContent = "Your Google Classroom account is connected.";
-          connectButton.hidden = true;
-          disconnectButton.hidden = false;
-        } else {
-          status.textContent = "Not connected";
-          message.textContent = "Connect your Google account to get started.";
-          connectButton.hidden = false;
-          disconnectButton.hidden = true;
-        }
-      } catch (error) {
-        status.textContent = "Unavailable";
-        message.textContent = "Could not check Classroom status: " + error.message;
-        connectButton.hidden = false;
-        disconnectButton.hidden = true;
-
-        console.error("Classroom status error:", error);
-      } finally {
-        connectButton.disabled = false;
-      }
-    }
-
-    $("classroom-connect-button").addEventListener("click", async () => {
-      const button = $("classroom-connect-button");
-
-      button.disabled = true;
-      button.textContent = "Connecting...";
-
-      try {
-        const result = await apiRequest("/classroom/connect");
-
-        if (!result.authorizationUrl) {
-          throw new Error("Google authorization URL was not returned by the server.");
-        }
-
-        window.location.href = result.authorizationUrl;
-      } catch (error) {
-        console.error("Classroom connection error:", error);
-        alert("Google Classroom connection failed: " + error.message);
-      } finally {
-        button.disabled = false;
-        button.textContent = "Connect Google Classroom";
-      }
     });
 
-    $("classroom-disconnect-button").addEventListener("click", async () => {
-      if (!confirm("Disconnect your Google Classroom account?")) {
-        return;
-      }
+    assignments = mergeById(assignments,convertedAssignments);
 
-      const button = $("classroom-disconnect-button");
-      button.disabled = true;
-
-      try {
-        await apiRequest("/classroom/disconnect", {
-          method: "DELETE"
-        });
-
-        await checkClassroomStatus();
-      } catch (error) {
-        console.error("Classroom disconnect error:", error);
-        alert("Google Classroom disconnect failed: " + error.message);
-      } finally {
-        button.disabled = false;
-      }
+    const convertedMaterials = courseMaterials.map(m => {
+      const course = courseMap.get(String(m.courseId));
+      const attachment = m.materials?.[0] || {};
+      const drive = attachment.driveFile?.driveFile || attachment.driveFile || {};
+      const link = attachment.link || {};
+      return {
+        id:String(m.id),
+        courseId:String(m.courseId || ""),
+        title:m.title || drive.title || link.title || "Course material",
+        subject:course?.name || "Google Classroom",
+        type:drive.title?.toLowerCase().endsWith(".pdf") ? "PDF" : "Resource",
+        url:drive.alternateLink || drive.webViewLink || link.url || m.alternateLink || "",
+        alternateLink:m.alternateLink || ""
+      };
     });
 
-    function updateStats() {
-      $("total-count").textContent = assignments.length;
+    materials = mergeById(materials,convertedMaterials);
 
-      $("pending-count").textContent =
-        assignments.filter(item => item.status === "Pending").length;
+    const courseBox = $("classroomCourses");
+    courseBox.replaceChildren();
 
-      $("completed-count").textContent =
-        assignments.filter(item => item.status === "Completed").length;
-    }
-
-    async function loadAssignments() {
-      if (!auth.currentUser || loadingAssignments) {
-        return;
-      }
-
-      const generation = authGeneration;
-      const uid = auth.currentUser.uid;
-      loadingAssignments = true;
-
-      const list = $("assignment-list");
-      list.replaceChildren();
-
-      const loading = document.createElement("div");
-      loading.className = "empty-state";
-      loading.textContent = "Loading assignments...";
-      list.appendChild(loading);
-
-      try {
-        const rows = await apiRequest("/assignments");
-
-        if (
-          generation !== authGeneration ||
-          !auth.currentUser ||
-          auth.currentUser.uid !== uid
-        ) {
-          return;
-        }
-
-        assignments = Array.isArray(rows) ? rows : [];
-        renderAssignments();
-      } catch (error) {
-        if (generation !== authGeneration) {
-          return;
-        }
-
-        console.error("Load assignments error:", error);
-        assignments = [];
-        updateStats();
-
-        list.replaceChildren();
-
-        const message = document.createElement("div");
-        message.className = "empty-state";
-        message.textContent = error.message;
-        list.appendChild(message);
-      } finally {
-        if (generation === authGeneration) {
-          loadingAssignments = false;
-        }
-      }
-    }
-
-    function renderAssignments() {
-      const filter = $("assignment-filter").value;
-      const query = $("assignment-search").value.trim().toLowerCase();
-
-      const visible = assignments.filter(item => {
-        const filterMatch = filter === "All" || item.status === filter;
-
-        const text = [
-          item.title || "",
-          item.subject || "",
-          item.description || ""
-        ].join(" ").toLowerCase();
-
-        return filterMatch && text.includes(query);
-      });
-
-      updateStats();
-      $("visible-count").textContent = `${visible.length} tasks`;
-
-      const list = $("assignment-list");
-      list.replaceChildren();
-
-      if (!visible.length) {
-        const empty = document.createElement("div");
-        empty.className = "empty-state";
-
-        empty.textContent = assignments.length
-          ? "No assignments match your filter."
-          : "No assignments yet. Add your first task.";
-
-        list.appendChild(empty);
-        return;
-      }
-
-      visible.forEach(item => {
-        const card = document.createElement("article");
-        card.className = "assignment-item";
-
-        const title = document.createElement("h3");
-        title.textContent = item.title || "Untitled assignment";
-
-        const subject = document.createElement("p");
-        subject.textContent = `Subject: ${item.subject || "Not specified"}`;
-
-        const due = document.createElement("p");
-        due.textContent = `Due date: ${item.deadline || "Not set"}`;
-
-        const status = document.createElement("div");
-        status.className = "assignment-status";
-        status.textContent = item.status || "Pending";
-
-        const actions = document.createElement("div");
-        actions.className = "assignment-actions";
-
-        const toggle = document.createElement("button");
-        toggle.type = "button";
-        toggle.textContent =
-          item.status === "Pending" ? "Mark completed" : "Mark pending";
-
-        toggle.addEventListener("click", async () => {
-          const nextStatus =
-            item.status === "Pending" ? "Completed" : "Pending";
-
-          toggle.disabled = true;
-
-          try {
-            await apiRequest(
-              `/assignments/${encodeURIComponent(item.id)}/status`,
-              {
-                method: "PATCH",
-                body: JSON.stringify({ status: nextStatus })
-              }
-            );
-
-            await loadAssignments();
-          } catch (error) {
-            console.error("Update status error:", error);
-            alert(error.message);
-          } finally {
-            toggle.disabled = false;
-          }
-        });
-
-        const remove = document.createElement("button");
-        remove.type = "button";
-        remove.textContent = "Delete";
-
-        remove.addEventListener("click", async () => {
-          if (!confirm(`Delete "${item.title}"?`)) {
-            return;
-          }
-
-          remove.disabled = true;
-
-          try {
-            await apiRequest(
-              `/assignments/${encodeURIComponent(item.id)}`,
-              { method: "DELETE" }
-            );
-
-            await loadAssignments();
-          } catch (error) {
-            console.error("Delete assignment error:", error);
-            alert(error.message);
-          } finally {
-            remove.disabled = false;
-          }
-        });
-
-        actions.append(toggle, remove);
-        card.append(title, subject, due, status);
-
-        if (item.description) {
-          const description = document.createElement("p");
-          description.textContent = item.description;
-          card.appendChild(description);
-        }
-
-        card.appendChild(actions);
-        list.appendChild(card);
-      });
-    }
-
-    $("assignment-form").addEventListener("submit", async event => {
-      event.preventDefault();
-
-      const form = event.currentTarget;
-      const button = form.querySelector('button[type="submit"]');
-
-      const title = $("assignment-title").value.trim();
-      const subject = $("assignment-subject").value.trim();
-      const deadline = $("assignment-deadline").value || null;
-      const description = $("assignment-description").value.trim();
-
-      if (!title || !subject) {
-        alert("Assignment title and subject are required.");
-        return;
-      }
-
-      button.disabled = true;
-      button.textContent = "Saving...";
-
-      try {
-        await apiRequest("/assignments", {
-          method: "POST",
-          body: JSON.stringify({ title, subject, deadline, description })
-        });
-
-        form.reset();
-        await loadAssignments();
-      } catch (error) {
-        console.error("Create assignment error:", error);
-        alert(error.message);
-      } finally {
-        button.disabled = false;
-        button.textContent = "Add assignment";
-      }
+    courses.forEach(course => {
+      const card = document.createElement("div");
+      card.className = "material-row";
+      card.innerHTML = `
+        <div class="file-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div class="material-info">
+          <h3>${escapeHTML(course.name || "Classroom course")}</h3>
+          <p>${escapeHTML(course.section || course.courseState || "Course")}</p>
+        </div>
+        <button class="small-btn">View materials</button>`;
+      card.querySelector("button").onclick = () => {
+        selectedSubject = course.name;
+        $("materialHeading").textContent = course.name + " — Materials";
+        renderMaterials();
+        showPage("materials");
+      };
+      courseBox.appendChild(card);
     });
 
-    $("assignment-filter").addEventListener("change", renderAssignments);
-    $("assignment-search").addEventListener("input", renderAssignments);
-
-    // Automatically refresh dashboard and Classroom status after login.
-    auth.onAuthStateChanged(user => {
-      authGeneration++;
-      loadingAssignments = false;
-      assignments = [];
-
-      $("auth-section").hidden = !!user;
-      $("app-shell").hidden = !user;
-      $("student-email").textContent = user ? user.email : "";
-
-      updateStats();
-      $("visible-count").textContent = "0 tasks";
-      $("assignment-list").replaceChildren();
-
-      if (user) {
-        loadAssignments();
-        checkClassroomStatus();
-      } else {
-        $("classroom-status").textContent = "Sign in required";
-        $("classroom-message").textContent =
-          "Sign in to check your Google Classroom connection.";
-        $("classroom-connect-button").hidden = false;
-        $("classroom-disconnect-button").hidden = true;
-
-        $("assignment-filter").value = "All";
-        $("assignment-search").value = "";
-      }
-    });
-
-    let scrollFrame = 0;
-
-    window.addEventListener("scroll", () => {
-      if (scrollFrame) {
-        return;
-      }
-
-      scrollFrame = requestAnimationFrame(() => {
-        const maxScroll = Math.max(
-          1,
-          document.documentElement.scrollHeight - window.innerHeight
-        );
-
-        const progress = Math.min(100, window.scrollY / maxScroll * 100);
-
-        document.documentElement.style.setProperty(
-          "--scroll",
-          progress.toFixed(2)
-        );
-
-        scrollFrame = 0;
-      });
-    }, { passive: true });
-
-    const navLinks = document.querySelectorAll(".nav-link[href^='#']");
-
-    const sections = [...navLinks]
-      .map(link => document.querySelector(link.getAttribute("href")))
-      .filter(Boolean);
-
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) {
-            return;
-          }
-
-          navLinks.forEach(link => {
-            link.classList.toggle(
-              "active",
-              link.getAttribute("href") === `#${entry.target.id}`
-            );
-          });
-        });
-      }, { rootMargin: "-20% 0px -65% 0px" });
-
-      sections.forEach(section => observer.observe(section));
+    if (!courses.length) {
+      courseBox.innerHTML = `<div class="empty">No courses returned. Confirm Google Classroom authorization and API permissions.</div>`;
     }
 
-    setMode("login");
-    console.log("ClassConnect initialized.");
-  </script>
+    saveLocal();
+    renderSubjects();
+    renderRecentMaterials();
+    renderMaterials();
+    renderAssignments();
+    renderDashboardTasks();
+    renderProgress();
+    toast("Classroom data synced.");
+  } catch (error) {
+    $("classroomStatus").textContent =
+      "Sync failed. Sign in first, connect Google Classroom, and verify that the backend provides /api/classroom/data.";
+    toast("Unable to sync Classroom data.");
+  }
+}
+
+function mergeById(existing,incoming) {
+  const map = new Map(existing.map(item => [String(item.id),item]));
+  incoming.forEach(item => {
+    const old = map.get(String(item.id));
+    map.set(String(item.id),old ? {...old,...item} : item);
+  });
+  return [...map.values()];
+}
+
+$("globalSearch").addEventListener("input", () => {
+  const query = $("globalSearch").value.trim();
+  if (!query) return;
+
+  const matchingMaterial = materials.some(m =>
+    (m.title + " " + m.subject).toLowerCase().includes(query.toLowerCase())
+  );
+  const matchingAssignment = assignments.some(a =>
+    (a.title + " " + a.subject).toLowerCase().includes(query.toLowerCase())
+  );
+
+  if (matchingMaterial || !matchingAssignment) {
+    $("materialSearch").value = query;
+    selectedSubject = null;
+    renderMaterials();
+    showPage("materials");
+  } else {
+    $("assignmentSearch").value = query;
+    renderAssignments();
+    showPage("assignments");
+  }
+});
+
+$("materialSearch").addEventListener("input",renderMaterials);
+$("materialFilter").addEventListener("change",renderMaterials);
+$("assignmentSearch").addEventListener("input",renderAssignments);
+$("assignmentFilter").addEventListener("change",renderAssignments);
+
+$("settingsBtn").addEventListener("click",() => {
+  toast("Settings: configure your profile and Firebase authentication.");
+});
+
+/* Premium glass bokeh on touch/click */
+function createBokeh(x,y) {
+  const bubble = document.createElement("span");
+  bubble.className = "bokeh";
+  bubble.style.left = x + "px";
+  bubble.style.top = y + "px";
+  document.body.appendChild(bubble);
+  setTimeout(() => bubble.remove(),850);
+}
+
+document.addEventListener("pointerdown",event => {
+  if (event.pointerType === "mouse" && event.button !== 0) return;
+  const target = event.target.closest(".subject-card,.panel,.material-row,.nav-btn,.primary-btn,.small-btn");
+  if (!target) return;
+  createBokeh(event.clientX,event.clientY);
+});
+
+function init() {
+  restoreLocal();
+  renderSubjects();
+  renderRecentMaterials();
+  renderMaterials();
+  renderAssignments();
+  renderTasks();
+  renderDashboardTasks();
+  renderNotes();
+  renderProgress();
+
+  // Use Firebase Auth if its configuration has been filled in.
+  if (firebaseConfig.apiKey.startsWith("AIza") && firebaseConfig.appId.startsWith("1:")) {
+    const script = document.createElement("script");
+    script.src = "https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js";
+    script.onload = () => {
+      const authScript = document.createElement("script");
+      authScript.src = "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js";
+      authScript.onload = () => {
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(user => {
+          currentUser = user;
+          if (user) {
+            const name = user.displayName || user.email || "Student";
+            $("profileName").textContent = name;
+            $("helloText").textContent = "Hello, " + name.split(" ")[0] + "! 👋";
+            $("avatar").textContent = name[0].toUpperCase();
+          }
+        });
+      };
+      document.head.appendChild(authScript);
+    };
+    document.head.appendChild(script);
+  }
+}
+
+init();
+
+/* Announcement cards */
+/* ===== Classroom-to-subject folder fixes and per-subject progress ===== */
+function subjectFor(name) {
+  const raw = String(name || "").trim();
+  const lower = raw.toLowerCase().replace(/[_-]+/g," ").replace(/\s+/g," ");
+  const matches = [];
+  const aliases = [
+    {subject:subjects[0],re:/\b(artificial intelligence|\bai\b)\b/},
+    {subject:subjects[1],re:/\b(data structures|dsa|data structure|ds\b)\b/},
+    {subject:subjects[2],re:/\b(operating systems|operating system|\bos\b)\b/},
+    {subject:subjects[3],re:/\b(web and mobile|web & mobile|w\s*&\s*mad|wmad|mobile app development)\b/},
+    {subject:subjects[4],re:/\b(discrete mathematics|discrete maths|dsgt|maths)\b/},
+    {subject:subjects[5],re:/\b(computer networks|networking|cn\b)\b/},
+    {subject:subjects[6],re:/\b(software engineering|software development|se\b)\b/},
+    {subject:subjects[7],re:/\b(machine learning|\bml\b)\b/}
+  ];
+  aliases.forEach(a=>{if(a.re.test(lower)) matches.push(a.subject)});
+  // Only map to a standard subject when the course title clearly identifies one subject.
+  if(matches.length===1) return matches[0];
+  const existing = subjects.find(s=>s.name.toLowerCase()===lower);
+  if(existing) return existing;
+  let dynamic = subjects.find(s=>s.name.toLowerCase()===raw.toLowerCase());
+  if(!dynamic){
+    dynamic={name:raw||"Google Classroom",code:"Google Classroom course",icon:"fa-folder-open",color:"rgba(145,166,255,.16)",ink:"#b8caff",dynamic:true};
+    subjects.push(dynamic);
+  }
+  return dynamic;
+}
+
+function materialCounts(subjectName){
+  const list=materials.filter(m=>m.subject===subjectName);
+  const done=list.filter(isDone).length;
+  return {total:list.length,done,pending:list.length-done};
+}
+
+function makeSubjectCard(subject){
+  const counts=materialCounts(subject.name);
+  const card=document.createElement("article");
+  card.className="subject-card glass";
+  card.tabIndex=0;card.setAttribute("role","button");card.setAttribute("aria-label","Open "+subject.name+" folder");
+  card.innerHTML=`<div class="subject-top"><div class="subject-icon" style="background:${subject.color};color:${subject.ink}"><i class="fa-solid ${subject.icon}"></i></div><div style="flex:1;min-width:0"><div class="subject-name">${escapeHTML(subject.name)}</div><div class="subject-code">${escapeHTML(subject.code||"Classroom course")}</div><div class="subject-counts"><span>${counts.total} materials</span><span class="completed">${counts.done} done</span><span class="remaining">${counts.pending} remaining</span></div></div><i class="fa-solid fa-chevron-right" style="color:#9db8ed"></i></div><div class="subject-bottom"><span class="muted">Open subject folder</span><div class="file-badges"><span class="file-badge"><i class="fa-solid fa-file-pdf"></i></span><span class="file-badge"><i class="fa-solid fa-file-lines"></i></span><span class="file-badge"><i class="fa-solid fa-link"></i></span></div></div>`;
+  const open=()=>{selectedSubject=subject.name;$('materialHeading').textContent=subject.name+" — Study Materials";$('materialSearch').value="";$('materialFilter').value="all";renderMaterials();showPage("materials")};
+  card.addEventListener("click",open);card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}});return card;
+}
+
+function renderSubjects(){
+  const dash=$("dashboardSubjects"),all=$("allSubjects");if(!dash||!all)return;dash.replaceChildren();all.replaceChildren();
+  subjects.slice(0,6).forEach(s=>dash.appendChild(makeSubjectCard(s)));
+  subjects.forEach(s=>all.appendChild(makeSubjectCard(s)));
+  ["assignmentSubject","taskSubject","noteSubject"].forEach(id=>{const select=$(id);if(!select)return;const previous=select.value;select.innerHTML=subjects.map(s=>`<option value="${escapeHTML(s.name)}">${escapeHTML(s.name)}</option>`).join("");if(previous)select.value=previous;});
+}
+
+function renderMaterials(){
+  const query=(($("materialSearch")?.value)||($("globalSearch")?.value)||"").toLowerCase().trim();
+  const filter=$("materialFilter")?.value||"all";
+  const filtered=materials.filter(m=>{
+    const subjectMatch=!selectedSubject||m.subject===selectedSubject;
+    const queryMatch=!query||[m.title,m.subject,m.type].some(v=>String(v||"").toLowerCase().includes(query));
+    const done=isDone(m);return subjectMatch&&queryMatch&&(filter==="all"||(filter==="done"&&done)||(filter==="pending"&&!done));
+  });
+  const container=$("materialsList");if(!container)return;container.replaceChildren();
+  if(selectedSubject){const counts=materialCounts(selectedSubject);const summary=document.createElement("div");summary.className="folder-summary";summary.innerHTML=`<span><b>${counts.total}</b> total materials</span><span>✓ <b>${counts.done}</b> completed</span><span>◷ <b>${counts.pending}</b> remaining</span>`;container.appendChild(summary)}
+  if(!filtered.length){const empty=document.createElement("div");empty.className="empty";empty.innerHTML=`<i class="fa-regular fa-folder-open" style="font-size:30px"></i><p><b>${selectedSubject?escapeHTML(selectedSubject):"No materials found"}</b></p><p>${classroomConnected?"No materials were returned for this course. Your teacher may have posted files under Assignments or may not have shared materials yet.":"Connect Google Classroom, then press Sync Now. Materials shared by your teachers will appear inside their subject folder."}</p><button class="primary-btn" onclick="showPage('classroom')">Open Google Classroom</button>`;container.appendChild(empty);return;}
+  filtered.forEach(m=>{const row=document.createElement("div");row.className="material-row";const pdf=/pdf/i.test((m.title||"")+" "+(m.type||""));row.innerHTML=`<div class="file-icon" style="${pdf?'background:rgba(255,75,90,.13);color:#ff8b9a':''}"><i class="fa-solid ${pdf?'fa-file-pdf':'fa-file-lines'}"></i></div><div class="material-info"><h3>${escapeHTML(m.title)}</h3><p>${escapeHTML(m.subject)} · <b style="color:${isDone(m)?'#7de8c2':'#ffd19a'}">${isDone(m)?'Done':'Pending'}</b></p></div><button class="small-btn preview-btn">Preview</button><button class="close-btn done-btn" title="Mark ${isDone(m)?'pending':'done'}" aria-label="Mark ${isDone(m)?'pending':'done'}"><i class="fa-solid ${isDone(m)?'fa-check':'fa-circle'}"></i></button>`;row.querySelector('.preview-btn').onclick=()=>previewMaterial(m);row.querySelector('.done-btn').onclick=()=>toggleMaterial(m);container.appendChild(row)});
+}
+
+function renderRecentMaterials(){
+  const container=$("recentMaterials");if(!container)return;container.replaceChildren();const recent=materials.slice(0,5);
+  if(!recent.length){container.innerHTML=`<div class="empty">Your Google Classroom materials will appear here after you connect and sync your account.</div>`;return;}
+  recent.forEach(m=>{const row=document.createElement("div");row.className="material-row";const pdf=/pdf/i.test((m.title||"")+" "+(m.type||""));row.innerHTML=`<div class="file-icon" style="${pdf?'background:rgba(255,75,90,.13);color:#ff8b9a':''}"><i class="fa-solid ${pdf?'fa-file-pdf':'fa-file-lines'}"></i></div><div class="material-info"><h3>${escapeHTML(m.title)}</h3><p>${escapeHTML(m.subject)} · ${isDone(m)?'Done':'Pending'}</p></div><button class="small-btn">Preview</button>`;row.querySelector('button').onclick=()=>previewMaterial(m);container.appendChild(row)});
+}
+
+function renderProgress(){
+  const total=materials.length,done=materials.filter(isDone).length,pct=total?Math.round(done/total*100):0,pending=total-done;
+  if($("progressPercent"))$("progressPercent").textContent=pct+"%";if($("completedCount"))$("completedCount").textContent=done;if($("progressCount"))$("progressCount").textContent=0;if($("pendingCount"))$("pendingCount").textContent=pending;if($("completedBar"))$("completedBar").style.width=pct+"%";if($("progressBar"))$("progressBar").style.width="0%";if($("pendingBar"))$("pendingBar").style.width=(100-pct)+"%";const ring=document.querySelector('.progress-ring');if(ring)ring.style.background=`conic-gradient(#20c9a2 0 ${pct}%,rgba(255,255,255,.10) ${pct}% 100%)`;
+  renderSubjects();
+}
+
+async function loadClassroom(){
+  $("classroomStatus").textContent="Syncing courses, assignments, announcements and study materials…";
+  try{
+    const result=await apiRequest("/classroom/data");
+    const courses=result.courses||result.data?.courses||[];
+    const coursework=result.courseWork||result.coursework||result.assignments||result.data?.courseWork||[];
+    const announcements=result.announcements||result.data?.announcements||[];
+    const courseMaterials=result.courseWorkMaterials||result.materials||result.data?.courseWorkMaterials||[];
+    classroomConnected=true;
+    const courseMap=new Map(courses.map(c=>[String(c.id),c]));
+    const courseSubject=new Map();
+    courses.forEach(c=>{const sub=subjectFor(c.name||"Google Classroom");courseSubject.set(String(c.id),sub.name)});
+    const convertedAssignments=coursework.map(a=>{const course=courseMap.get(String(a.courseId));const subject=courseSubject.get(String(a.courseId))||subjectFor(course?.name||"Google Classroom").name;return{id:String(a.id),title:a.title||"Classroom assignment",subject,dueDate:a.dueDate||a.dueDateTime||"",description:a.description||"",alternateLink:a.alternateLink||"",completed:false,source:"classroom"}});
+    assignments=mergeById(assignments,convertedAssignments);
+    const convertedMaterials=courseMaterials.map(m=>{const course=courseMap.get(String(m.courseId));const subject=courseSubject.get(String(m.courseId))||subjectFor(course?.name||"Google Classroom").name;const attachment=m.materials?.[0]||{};const drive=attachment.driveFile?.driveFile||attachment.driveFile||{};const link=attachment.link||{};const url=drive.alternateLink||drive.webViewLink||link.url||m.alternateLink||"";return{id:String(m.id),courseId:String(m.courseId||""),title:m.title||drive.title||link.title||"Course material",subject,type:/\.pdf(?:$|[?#])/i.test(drive.title||url)?"PDF":"Resource",url,alternateLink:m.alternateLink||"",source:"classroom"}});
+    materials=mergeById(materials,convertedMaterials);
+    const courseBox=$("classroomCourses");courseBox.replaceChildren();
+    courses.forEach(course=>{const sub=subjectFor(course.name||"Google Classroom");const counts=materialCounts(sub.name);const card=document.createElement('div');card.className='material-row';card.innerHTML=`<div class="file-icon"><i class="fa-solid fa-graduation-cap"></i></div><div class="material-info"><h3>${escapeHTML(course.name||'Classroom course')}</h3><p>${counts.total} materials · ${counts.done} done · ${counts.pending} remaining</p></div><button class="small-btn">Open folder</button>`;card.querySelector('button').onclick=()=>{selectedSubject=sub.name;$("materialHeading").textContent=sub.name+" — Study Materials";$("materialSearch").value="";$("materialFilter").value="all";renderMaterials();showPage('materials')};courseBox.appendChild(card)});
+    if(!courses.length)courseBox.innerHTML='<div class="empty">No courses returned. Check Google Classroom connection and API permissions.</div>';
+    const announcementBox=$("classroomAnnouncements");
+    if(announcementBox){announcementBox.replaceChildren();announcements.forEach(item=>{const course=courseMap.get(String(item.courseId));const card=document.createElement('article');card.className='announcement-card';card.innerHTML=`<h3>${escapeHTML(item.text||item.title||"Classroom announcement")}</h3><p>${escapeHTML(item.description||item.body||"")}</p><small>${escapeHTML(course?.name||"Google Classroom")} · ${escapeHTML(formatDate(item.creationTime||item.updateTime||""))}</small>${item.alternateLink?`<p><a href="${escapeHTML(safeURL(item.alternateLink))}" target="_blank" rel="noopener noreferrer">Open in Classroom ↗</a></p>`:""}`;announcementBox.appendChild(card)});if(!announcements.length)announcementBox.innerHTML='<div class="empty">No announcements returned by the connected Classroom account.</div>';}
+    $("classroomStatus").textContent=`Synced ${courses.length} courses, ${coursework.length} assignments, ${courseMaterials.length} materials and ${announcements.length} announcements. If materials are missing, the backend must request Google Classroom courseWorkMaterials and required OAuth scopes.`;
+    saveLocal();renderSubjects();renderRecentMaterials();renderMaterials();renderAssignments();renderDashboardTasks();renderProgress();toast("Classroom data synced.");
+  }catch(error){$("classroomStatus").textContent="Sync failed. Sign in, connect Google Classroom, then check that /api/classroom/data returns courses and courseWorkMaterials.";toast("Unable to sync Classroom data. Check sign-in and backend route.");}
+}
+
+// Open accessible PDFs in an in-app viewer; Google Drive files use the Drive preview endpoint.
+function previewMaterial(material){
+  $("previewTitle").textContent=material.title||"Study Material";
+  let url=safeURL(material.url||material.alternateLink||material.webViewLink);
+  const driveId=(url.match(/drive\.google\.com\/file\/d\/([^/?#]+)/)||url.match(/[?&]id=([^&#]+)/)||[])[1];
+  const isPdf=/\.pdf(?:$|[?#])/i.test((material.title||"")+" "+url)||/pdf/i.test(material.type||"");
+  let previewUrl=url;
+  if(driveId&&isPdf)previewUrl="https://drive.google.com/file/d/"+encodeURIComponent(driveId)+"/preview";
+  if(previewUrl&&isPdf){$("previewContent").innerHTML=`<iframe class="pdf-frame" title="PDF preview" src="${escapeHTML(previewUrl)}" allow="autoplay"></iframe><p class="muted">If your teacher's Google Drive permissions prevent embedding, open the original file below.</p><a class="primary-btn" href="${escapeHTML(url||previewUrl)}" target="_blank" rel="noopener noreferrer">Open source file ↗</a>`;}
+  else if(url){$("previewContent").innerHTML=`<div class="status-message">This resource may require Google sign-in or permission from your teacher.</div><a class="primary-btn" href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Open Resource ↗</a>`;}
+  else{$("previewContent").innerHTML='<div class="empty">No direct preview link is available for this item.</div>';}
+  openModal("previewModal");
+}
+
+// Fix Google Classroom due-date objects so they never display as [object Object].
+
+</script>
+
 </body>
 </html>
