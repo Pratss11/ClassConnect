@@ -741,28 +741,7 @@ h3 {
   transform: translateY(0);
 }
 
-/* Premium glass bokeh when cards are touched or clicked */
-.bokeh {
-  position: fixed;
-  z-index: 150;
-  width: 95px;
-  height: 95px;
-  border-radius: 50%;
-  pointer-events: none;
-  background: radial-gradient(circle at 35% 30%,
-    rgba(255,255,255,.95),
-    rgba(150,205,255,.48) 35%,
-    rgba(180,210,255,.08) 70%,
-    transparent 75%);
-  border: 1px solid rgba(255,255,255,.7);
-  box-shadow: 0 0 35px #8fc4ff50, inset 0 0 18px #ffffffaa;
-  backdrop-filter: blur(3px);
-  animation: bokehPop .8s ease-out forwards;
-}
-
-@keyframes bokehPop {
-  0% { opacity: 0; transform: translate(-50%,-50%) scale(.2); }
-  25% { opacity: .9; }
+25% { opacity: .9; }
   100% { opacity: 0; transform: translate(-50%,-50%) scale(1.7); }
 }
 
@@ -870,11 +849,38 @@ h1,h2,h3,.subject-name,.material-info h3,.task-content strong{color:#f4f6ff}.tex
 .form-group label{color:#dfe6ff}.form-group input,.form-group select,.form-group textarea{background:rgba(7,11,25,.7);color:#f3f5ff}.form-group select option{background:#171d32;color:#f3f5ff}
 .progress-ring::before{border:1px solid rgba(255,255,255,.08)}.mobile-nav{background:rgba(18,23,42,.86);border-color:rgba(230,235,255,.15);box-shadow:0 12px 40px rgba(0,0,0,.35)}.mobile-nav button{color:#aebada}.mobile-nav button.active{color:#b6ccff}
 .toast{color:#edf2ff;background:rgba(25,31,53,.96);border:1px solid rgba(230,235,255,.15);box-shadow:0 15px 40px rgba(0,0,0,.35)}
-.empty{color:#aebbd9}.empty p{color:#aebbd9}.pdf-frame{background:#fff}.bokeh{width:110px;height:110px;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95),rgba(155,185,255,.36) 28%,rgba(157,122,255,.14) 55%,transparent 74%);border-color:rgba(230,238,255,.65);box-shadow:0 0 38px rgba(126,157,255,.4),inset 0 0 20px rgba(255,255,255,.65)}
+.empty{color:#aebbd9}.empty p{color:#aebbd9}.pdf-frame{background:#fff}
 /* More visible counts and done/pending indicators in each subject folder */
 .subject-counts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.subject-counts span{font-size:10px;font-weight:700;padding:5px 8px;border-radius:20px;background:rgba(255,255,255,.07);color:#d9e2ff;border:1px solid rgba(255,255,255,.08)}.subject-counts .remaining{color:#ffd19a;background:rgba(255,169,72,.10)}.subject-counts .completed{color:#81edc7;background:rgba(32,201,162,.10)}
 .folder-summary{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}.folder-summary span{padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.08);font-size:12px;color:#dce5ff}
 @media(max-width:760px){.topbar{background:rgba(12,16,32,.86)}.layout{padding:10px}.hero{border-radius:20px}.panel{border-radius:19px}.subject-card{border-radius:18px}}
+
+
+/* Premium logout control; no tap/click bokeh effect */
+.topbar .logout-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;padding:10px 14px;border-radius:12px;background:rgba(70,100,170,.14);color:#dce8ff;border:1px solid rgba(130,165,235,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s}
+.topbar .logout-btn i{color:#9fc1ff}
+.topbar .logout-btn:hover{background:rgba(75,115,200,.25);border-color:rgba(140,180,255,.5)}
+.topbar .logout-btn:disabled{opacity:.6;cursor:wait}
+.dashboard-folder{margin:18px 0 22px;padding:20px;scroll-margin-top:20px}
+.folder-head{align-items:flex-start;gap:14px}
+.folder-head h2{margin:5px 0 4px}
+.folder-toolbar{margin:16px 0}
+.folder-materials{display:grid;gap:10px}
+.folder-materials .empty{padding:24px}
+.auth-gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(5,9,20,.88);backdrop-filter:blur(18px)}
+.auth-gate[hidden]{display:none!important}
+.auth-card{width:min(440px,100%);padding:30px;border-radius:24px;background:rgba(17,25,46,.96);border:1px solid rgba(150,177,230,.22);box-shadow:0 25px 90px rgba(0,0,0,.4)}
+.auth-brand{min-width:0;margin-bottom:24px;font-size:23px}
+.auth-card h1{font-size:27px;margin:0 0 8px;color:#f1f5ff}
+.auth-form{display:grid;gap:14px;margin-top:22px}
+.auth-form label{display:grid;gap:7px;color:#dce6ff;font-size:13px}
+.auth-form input{width:100%;padding:12px 13px;border-radius:11px;border:1px solid rgba(150,177,230,.25);background:rgba(255,255,255,.06);color:#fff;outline:none}
+.auth-form input:focus{border-color:#83aaff}
+.auth-submit,.auth-google{width:100%;justify-content:center;margin-top:3px}
+.auth-google{margin-top:10px}
+.auth-error{color:#ff9da8;min-height:20px;font-size:13px}
+body.signed-out .topbar,body.signed-out .layout,body.signed-out .mobile-nav{display:none!important}
+@media(max-width:760px){.topbar .logout-btn{padding:9px 10px;gap:6px;font-size:12px}.dashboard-folder{padding:14px}.folder-head{flex-wrap:wrap}.folder-head .secondary-btn{width:100%}.auth-card{padding:24px}}
 
 </style>
 </head>
@@ -893,6 +899,10 @@ h1,h2,h3,.subject-name,.material-info h3,.task-content strong{color:#f4f6ff}.tex
       placeholder="Search subjects, study materials, assignments..."
       aria-label="Search ClassConnect">
   </label>
+
+  <button id="logoutBtn" class="logout-btn" type="button" aria-label="Log out of ClassConnect">
+    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>Logout</span>
+  </button>
 
   <div class="profile">
     <div class="avatar" id="avatar">P</div>
@@ -959,6 +969,15 @@ h1,h2,h3,.subject-name,.material-info h3,.task-content strong{color:#f4f6ff}.tex
       </div>
 
       <div class="subject-grid" id="dashboardSubjects"></div>
+
+      <section id="dashboardSubjectFolder" class="panel glass dashboard-folder" hidden aria-live="polite">
+        <div class="panel-head folder-head">
+          <div><div class="eyebrow">SUBJECT FOLDER</div><h2 id="dashboardFolderTitle">Subject materials</h2><p class="muted" id="dashboardFolderStats"></p></div>
+          <button class="secondary-btn" id="closeDashboardFolder" type="button"><i class="fa-solid fa-arrow-left"></i> Back to subjects</button>
+        </div>
+        <div class="toolbar folder-toolbar"><input id="dashboardFolderSearch" type="search" placeholder="Search this subject..."><select id="dashboardFolderFilter"><option value="all">All materials</option><option value="pending">Pending</option><option value="done">Completed</option></select></div>
+        <div id="dashboardFolderMaterials" class="folder-materials"></div>
+      </section>
 
       <div class="dashboard-grid">
 
@@ -1208,6 +1227,21 @@ h1,h2,h3,.subject-name,.material-info h3,.task-content strong{color:#f4f6ff}.tex
     <div id="previewContent"></div>
   </div>
 </div>
+
+<section id="signedOutGate" class="auth-gate" hidden aria-labelledby="authGateTitle">
+  <div class="auth-card glass">
+    <div class="brand auth-brand"><div class="brand-mark"><i class="fa-solid fa-book-open"></i></div><div>Class<span>Connect</span></div></div>
+    <h1 id="authGateTitle">You’re signed out</h1>
+    <p class="muted">Sign in again to return to your study workspace.</p>
+    <form id="reloginForm" class="auth-form">
+      <label>Email address<input id="reloginEmail" type="email" autocomplete="username" required placeholder="you@example.com"></label>
+      <label>Password<input id="reloginPassword" type="password" autocomplete="current-password" required placeholder="Your password"></label>
+      <button class="primary-btn auth-submit" type="submit">Sign in</button>
+    </form>
+    <button id="googleReloginBtn" class="secondary-btn auth-google" type="button"><i class="fa-brands fa-google"></i> Continue with Google</button>
+    <p id="authGateError" class="auth-error" role="alert"></p>
+  </div>
+</section>
 
 <div class="toast" id="toast" role="status"></div>
 
@@ -2003,6 +2037,7 @@ async function loadClassroom() {
     renderSubjects();
     renderRecentMaterials();
     renderMaterials();
+    if (selectedSubject && $("dashboardSubjectFolder") && !$("dashboardSubjectFolder").hidden) renderDashboardSubjectFolder();
     renderAssignments();
     renderDashboardTasks();
     renderProgress();
@@ -2055,23 +2090,6 @@ $("settingsBtn").addEventListener("click",() => {
   toast("Settings: configure your profile and Firebase authentication.");
 });
 
-/* Premium glass bokeh on touch/click */
-function createBokeh(x,y) {
-  const bubble = document.createElement("span");
-  bubble.className = "bokeh";
-  bubble.style.left = x + "px";
-  bubble.style.top = y + "px";
-  document.body.appendChild(bubble);
-  setTimeout(() => bubble.remove(),850);
-}
-
-document.addEventListener("pointerdown",event => {
-  if (event.pointerType === "mouse" && event.button !== 0) return;
-  const target = event.target.closest(".subject-card,.panel,.material-row,.nav-btn,.primary-btn,.small-btn");
-  if (!target) return;
-  createBokeh(event.clientX,event.clientY);
-});
-
 function init() {
   restoreLocal();
   renderSubjects();
@@ -2095,10 +2113,16 @@ function init() {
         firebase.auth().onAuthStateChanged(user => {
           currentUser = user;
           if (user) {
+            sessionStorage.removeItem("classconnect_signed_out");
+            document.body.classList.remove("signed-out");
+            $("signedOutGate").hidden = true;
             const name = user.displayName || user.email || "Student";
             $("profileName").textContent = name;
             $("helloText").textContent = "Hello, " + name.split(" ")[0] + "! 👋";
             $("avatar").textContent = name[0].toUpperCase();
+          } else if (sessionStorage.getItem("classconnect_signed_out") === "1") {
+            document.body.classList.add("signed-out");
+            $("signedOutGate").hidden = false;
           }
         });
       };
@@ -2107,6 +2131,37 @@ function init() {
     document.head.appendChild(script);
   }
 }
+
+// Sign out through Firebase, then show a real sign-in gate instead of leaving the dashboard open.
+$("logoutBtn")?.addEventListener("click", async () => {
+  const button = $("logoutBtn");
+  if (!window.firebase?.auth) { toast("Firebase Auth is not ready. Refresh the page and try again."); return; }
+  button.disabled = true;
+  try {
+    await firebase.auth().signOut();
+    sessionStorage.setItem("classconnect_signed_out", "1");
+    document.body.classList.add("signed-out");
+    $("signedOutGate").hidden = false;
+    $("authGateError").textContent = "";
+  } catch (error) {
+    console.error("Logout failed:", error);
+    toast("Logout failed: " + (error.message || "Please try again."));
+  } finally { button.disabled = false; }
+});
+
+$("reloginForm")?.addEventListener("submit", async event => {
+  event.preventDefault();
+  $("authGateError").textContent = "";
+  try {
+    await firebase.auth().signInWithEmailAndPassword($("reloginEmail").value.trim(), $("reloginPassword").value);
+  } catch (error) { $("authGateError").textContent = error.message || "Could not sign in."; }
+});
+
+$("googleReloginBtn")?.addEventListener("click", async () => {
+  $("authGateError").textContent = "";
+  try { await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+  catch (error) { $("authGateError").textContent = error.message || "Google sign-in failed."; }
+});
 
 init();
 
@@ -2148,10 +2203,9 @@ function materialCounts(subjectName){
 function makeSubjectCard(subject){
   const counts=materialCounts(subject.name);
   const card=document.createElement("article");
-  card.className="subject-card glass";
-  card.tabIndex=0;card.setAttribute("role","button");card.setAttribute("aria-label","Open "+subject.name+" folder");
-  card.innerHTML=`<div class="subject-top"><div class="subject-icon" style="background:${subject.color};color:${subject.ink}"><i class="fa-solid ${subject.icon}"></i></div><div style="flex:1;min-width:0"><div class="subject-name">${escapeHTML(subject.name)}</div><div class="subject-code">${escapeHTML(subject.code||"Classroom course")}</div><div class="subject-counts"><span>${counts.total} materials</span><span class="completed">${counts.done} done</span><span class="remaining">${counts.pending} remaining</span></div></div><i class="fa-solid fa-chevron-right" style="color:#9db8ed"></i></div><div class="subject-bottom"><span class="muted">Open subject folder</span><div class="file-badges"><span class="file-badge"><i class="fa-solid fa-file-pdf"></i></span><span class="file-badge"><i class="fa-solid fa-file-lines"></i></span><span class="file-badge"><i class="fa-solid fa-link"></i></span></div></div>`;
-  const open=()=>{selectedSubject=subject.name;$('materialHeading').textContent=subject.name+" — Study Materials";$('materialSearch').value="";$('materialFilter').value="all";renderMaterials();showPage("materials")};
+  card.className="subject-card glass";card.tabIndex=0;card.setAttribute("role","button");card.setAttribute("aria-label","Open "+subject.name+" folder");
+  card.innerHTML=`<div class="subject-top"><div class="subject-icon" style="background:${subject.color};color:${subject.ink}"><i class="fa-solid ${subject.icon}"></i></div><div style="flex:1;min-width:0"><div class="subject-name">${escapeHTML(subject.name)}</div><div class="subject-code">${escapeHTML(subject.code||"Google Classroom course")}</div><div class="subject-counts"><span>${counts.total} materials</span><span class="completed">${counts.done} done</span><span class="remaining">${counts.pending} remaining</span></div></div><i class="fa-solid fa-chevron-right" style="color:#9db8ed"></i></div><div class="subject-bottom"><span class="muted">Open folder on dashboard</span><div class="file-badges"><span class="file-badge"><i class="fa-solid fa-file-pdf"></i></span><span class="file-badge"><i class="fa-solid fa-file-lines"></i></span><span class="file-badge"><i class="fa-solid fa-link"></i></span></div></div>`;
+  const open=()=>openDashboardSubjectFolder(subject);
   card.addEventListener("click",open);card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}});return card;
 }
 
@@ -2161,6 +2215,35 @@ function renderSubjects(){
   subjects.forEach(s=>all.appendChild(makeSubjectCard(s)));
   ["assignmentSubject","taskSubject","noteSubject"].forEach(id=>{const select=$(id);if(!select)return;const previous=select.value;select.innerHTML=subjects.map(s=>`<option value="${escapeHTML(s.name)}">${escapeHTML(s.name)}</option>`).join("");if(previous)select.value=previous;});
 }
+
+function openDashboardSubjectFolder(subject){
+  selectedSubject=subject.name;
+  const panel=$("dashboardSubjectFolder");
+  $("dashboardFolderTitle").textContent=subject.name;
+  $("dashboardFolderSearch").value="";
+  $("dashboardFolderFilter").value="all";
+  renderDashboardSubjectFolder();
+  panel.hidden=false;
+  panel.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderDashboardSubjectFolder(){
+  const name=selectedSubject;
+  const list=materials.filter(m=>m.subject===name);
+  const done=list.filter(isDone).length;
+  const pending=list.length-done;
+  $("dashboardFolderStats").textContent=`${list.length} materials · ${done} completed · ${pending} remaining`;
+  const query=($("dashboardFolderSearch").value||"").trim().toLowerCase();
+  const filter=$("dashboardFolderFilter").value;
+  const filtered=list.filter(m=>{const isCompleted=isDone(m);return (!query||[m.title,m.subject,m.type].some(v=>String(v||"").toLowerCase().includes(query)))&&(filter==="all"||(filter==="done"&&isCompleted)||(filter==="pending"&&!isCompleted));});
+  const container=$("dashboardFolderMaterials");container.replaceChildren();
+  if(!filtered.length){container.innerHTML=`<div class="empty"><i class="fa-regular fa-folder-open" style="font-size:28px"></i><p><b>${escapeHTML(name||"Subject folder")}</b></p><p>${list.length?"No materials match this filter.":(classroomConnected?"No materials were returned for this subject. Check whether your teacher shared files or attachments in Google Classroom.":"Connect Google Classroom and select Sync Now to load your actual course materials here.")}</p><button class="primary-btn" type="button" id="folderOpenClassroom">Open Google Classroom</button></div>`;$("folderOpenClassroom").onclick=()=>showPage("classroom");return;}
+  filtered.forEach(m=>{const row=document.createElement("div");row.className="material-row";const pdf=/pdf/i.test((m.title||"")+" "+(m.type||""));row.innerHTML=`<div class="file-icon" style="${pdf?'background:rgba(255,75,90,.13);color:#ff8b9a':''}"><i class="fa-solid ${pdf?'fa-file-pdf':'fa-file-lines'}"></i></div><div class="material-info"><h3>${escapeHTML(m.title||"Study material")}</h3><p>${escapeHTML(m.type||m.subject)} · <b style="color:${isDone(m)?'#7de8c2':'#ffd19a'}">${isDone(m)?'Done':'Pending'}</b></p></div><button class="small-btn folder-preview" type="button">Preview</button><button class="close-btn folder-done" type="button" aria-label="Mark ${isDone(m)?'pending':'done'}"><i class="fa-solid ${isDone(m)?'fa-check':'fa-circle'}"></i></button>`;row.querySelector(".folder-preview").onclick=()=>previewMaterial(m);row.querySelector(".folder-done").onclick=async()=>{await toggleMaterial(m);renderSubjects();renderDashboardSubjectFolder();};container.appendChild(row);});
+}
+
+$("closeDashboardFolder")?.addEventListener("click",()=>{selectedSubject=null;$("dashboardSubjectFolder").hidden=true;});
+$("dashboardFolderSearch")?.addEventListener("input",renderDashboardSubjectFolder);
+$("dashboardFolderFilter")?.addEventListener("change",renderDashboardSubjectFolder);
 
 function renderMaterials(){
   const query=(($("materialSearch")?.value)||($("globalSearch")?.value)||"").toLowerCase().trim();
