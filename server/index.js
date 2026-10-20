@@ -3,14 +3,6 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
-const admin = require("firebase-admin");
-const createClassroomOAuthRouter = require("./classroom-oauth");
-
-//// =====================================================
-// 1. FIREBASE ADMIN INITIALIZATION
-// =====================================================
-
-const FIREBASE_PROJECT_ID = "classconnect-42a51";
 
 const {
   initializeApp,
@@ -19,6 +11,14 @@ const {
 } = require("firebase-admin/app");
 
 const { getAuth } = require("firebase-admin/auth");
+
+const createClassroomOAuthRouter = require("./classroom-oauth");
+
+// =====================================================
+// 1. FIREBASE ADMIN INITIALIZATION
+// =====================================================
+
+const FIREBASE_PROJECT_ID = "classconnect-42a51";
 
 let serviceAccount;
 
@@ -35,6 +35,7 @@ try {
     "Failed to load Firebase service account:",
     error.message
   );
+
   throw error;
 }
 
@@ -53,10 +54,14 @@ const firebaseApp =
 
 const firebaseAuth = getAuth(firebaseApp);
 
+console.log("Firebase Admin initialized successfully.");
+
 // =====================================================
 // 2. EXPRESS APPLICATION
 // =====================================================
+
 const app = express();
+
 const PORT = Number(process.env.PORT) || 3000;
 
 app.use(cors());
@@ -104,18 +109,23 @@ const pool = mysql.createPool(dbConfig);
 
 async function requireFirebaseUser(req, res, next) {
   const authorization = req.headers.authorization || "";
+
   const match = authorization.match(/^Bearer\s+(.+)$/i);
 
   if (!match) {
     return res.status(401).json({
-      error: "Sign in required. Missing Firebase authentication token.",
+      error:
+        "Sign in required. Missing Firebase authentication token.",
     });
   }
 
   try {
-    const decoded = await admin
-      .auth()
-      .verifyIdToken(match[1]);
+    // IMPORTANT:
+    // Use the modular Firebase Admin API.
+    // Do not use admin.auth().
+    const decoded = await firebaseAuth.verifyIdToken(
+      match[1]
+    );
 
     req.firebaseUser = decoded;
 
@@ -134,6 +144,7 @@ async function requireFirebaseUser(req, res, next) {
 
 // =====================================================
 // 5. HOME ROUTE
+// GET /
 // =====================================================
 
 app.get("/", (req, res) => {
@@ -145,6 +156,7 @@ app.get("/", (req, res) => {
 
 // =====================================================
 // 6. DATABASE HEALTH CHECK
+// GET /api/health
 // =====================================================
 
 app.get("/api/health", async (req, res) => {
@@ -160,7 +172,10 @@ app.get("/api/health", async (req, res) => {
       database: "connected",
     });
   } catch (error) {
-    console.error("Database health check failed:", error.message);
+    console.error(
+      "Database health check failed:",
+      error.message
+    );
 
     return res.status(500).json({
       status: "ERROR",
@@ -182,10 +197,11 @@ const classroomOAuthRouter = createClassroomOAuthRouter({
 
 app.use("/api/classroom", classroomOAuthRouter);
 
-console.log("Google Classroom routes registered");
+console.log("Google Classroom routes registered.");
 
 // =====================================================
 // 8. ASSIGNMENT AUTHENTICATION
+// All /api/assignments routes require Firebase login.
 // =====================================================
 
 app.use("/api/assignments", requireFirebaseUser);
@@ -214,7 +230,10 @@ app.get("/api/assignments", async (req, res) => {
 
     return res.json(rows);
   } catch (error) {
-    console.error("Fetch assignments error:", error.message);
+    console.error(
+      "Fetch assignments error:",
+      error.message
+    );
 
     return res.status(500).json({
       error:
@@ -286,7 +305,9 @@ app.post("/api/assignments", async (req, res) => {
         });
       }
 
-      const parsedDate = new Date(`${deadline}T00:00:00Z`);
+      const parsedDate = new Date(
+        `${deadline}T00:00:00Z`
+      );
 
       if (
         Number.isNaN(parsedDate.getTime()) ||
@@ -318,7 +339,10 @@ app.post("/api/assignments", async (req, res) => {
       id: result.insertId,
     });
   } catch (error) {
-    console.error("Create assignment error:", error.message);
+    console.error(
+      "Create assignment error:",
+      error.message
+    );
 
     return res.status(500).json({
       error: "Could not create assignment.",
@@ -331,167 +355,201 @@ app.post("/api/assignments", async (req, res) => {
 // PATCH /api/assignments/:id/status
 // =====================================================
 
-app.patch("/api/assignments/:id/status", async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    const { status } = req.body;
+app.patch(
+  "/api/assignments/:id/status",
+  async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const { status } = req.body;
 
-    if (!Number.isSafeInteger(id) || id < 1) {
-      return res.status(400).json({
-        error: "Invalid assignment ID.",
-      });
-    }
-
-    if (!["Pending", "Completed"].includes(status)) {
-      return res.status(400).json({
-        error: "Status must be Pending or Completed.",
-      });
-    }
-
-    const [result] = await pool.execute(
-      `UPDATE assignments
-       SET status = ?
-       WHERE id = ? AND user_uid = ?`,
-      [status, id, req.firebaseUser.uid]
-    );
-
-    if (result.affectedRows === 0) {
-      const [rows] = await pool.execute(
-        `SELECT id
-         FROM assignments
-         WHERE id = ? AND user_uid = ?`,
-        [id, req.firebaseUser.uid]
-      );
-
-      if (rows.length === 0) {
-        return res.status(404).json({
-          error: "Assignment not found.",
+      if (!Number.isSafeInteger(id) || id < 1) {
+        return res.status(400).json({
+          error: "Invalid assignment ID.",
         });
       }
+
+      if (!["Pending", "Completed"].includes(status)) {
+        return res.status(400).json({
+          error: "Status must be Pending or Completed.",
+        });
+      }
+
+      const [result] = await pool.execute(
+        `UPDATE assignments
+         SET status = ?
+         WHERE id = ? AND user_uid = ?`,
+        [status, id, req.firebaseUser.uid]
+      );
+
+      if (result.affectedRows === 0) {
+        const [rows] = await pool.execute(
+          `SELECT id
+           FROM assignments
+           WHERE id = ? AND user_uid = ?`,
+          [id, req.firebaseUser.uid]
+        );
+
+        if (rows.length === 0) {
+          return res.status(404).json({
+            error: "Assignment not found.",
+          });
+        }
+      }
+
+      return res.json({
+        message: `Assignment marked as ${status}.`,
+      });
+    } catch (error) {
+      console.error(
+        "Update assignment status error:",
+        error.message
+      );
+
+      return res.status(500).json({
+        error: "Could not update assignment status.",
+      });
     }
-
-    return res.json({
-      message: `Assignment marked as ${status}.`,
-    });
-  } catch (error) {
-    console.error("Update assignment status error:", error.message);
-
-    return res.status(500).json({
-      error: "Could not update assignment status.",
-    });
   }
-});
+);
 
 // =====================================================
 // 12. LEGACY COMPLETION ROUTE
 // PATCH /api/assignments/:id/complete
 // =====================================================
 
-app.patch("/api/assignments/:id/complete", async (req, res) => {
-  try {
-    const id = Number(req.params.id);
+app.patch(
+  "/api/assignments/:id/complete",
+  async (req, res) => {
+    try {
+      const id = Number(req.params.id);
 
-    if (!Number.isSafeInteger(id) || id < 1) {
-      return res.status(400).json({
-        error: "Invalid assignment ID.",
-      });
-    }
+      if (!Number.isSafeInteger(id) || id < 1) {
+        return res.status(400).json({
+          error: "Invalid assignment ID.",
+        });
+      }
 
-    const [result] = await pool.execute(
-      `UPDATE assignments
-       SET status = 'Completed'
-       WHERE id = ? AND user_uid = ?`,
-      [id, req.firebaseUser.uid]
-    );
-
-    if (result.affectedRows === 0) {
-      const [rows] = await pool.execute(
-        `SELECT id
-         FROM assignments
+      const [result] = await pool.execute(
+        `UPDATE assignments
+         SET status = 'Completed'
          WHERE id = ? AND user_uid = ?`,
         [id, req.firebaseUser.uid]
       );
 
-      if (rows.length === 0) {
-        return res.status(404).json({
-          error: "Assignment not found.",
-        });
+      if (result.affectedRows === 0) {
+        const [rows] = await pool.execute(
+          `SELECT id
+           FROM assignments
+           WHERE id = ? AND user_uid = ?`,
+          [id, req.firebaseUser.uid]
+        );
+
+        if (rows.length === 0) {
+          return res.status(404).json({
+            error: "Assignment not found.",
+          });
+        }
       }
+
+      return res.json({
+        message: "Assignment marked as completed.",
+      });
+    } catch (error) {
+      console.error(
+        "Complete assignment error:",
+        error.message
+      );
+
+      return res.status(500).json({
+        error: "Could not complete assignment.",
+      });
     }
-
-    return res.json({
-      message: "Assignment marked as completed.",
-    });
-  } catch (error) {
-    console.error("Complete assignment error:", error.message);
-
-    return res.status(500).json({
-      error: "Could not complete assignment.",
-    });
   }
-});
+);
 
 // =====================================================
 // 13. DELETE ASSIGNMENT
 // DELETE /api/assignments/:id
 // =====================================================
 
-app.delete("/api/assignments/:id", async (req, res) => {
-  try {
-    const id = Number(req.params.id);
+app.delete(
+  "/api/assignments/:id",
+  async (req, res) => {
+    try {
+      const id = Number(req.params.id);
 
-    if (!Number.isSafeInteger(id) || id < 1) {
-      return res.status(400).json({
-        error: "Invalid assignment ID.",
+      if (!Number.isSafeInteger(id) || id < 1) {
+        return res.status(400).json({
+          error: "Invalid assignment ID.",
+        });
+      }
+
+      const [result] = await pool.execute(
+        `DELETE FROM assignments
+         WHERE id = ? AND user_uid = ?`,
+        [id, req.firebaseUser.uid]
+      );
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({
+          error: "Assignment not found.",
+        });
+      }
+
+      return res.json({
+        message: "Assignment deleted successfully.",
+      });
+    } catch (error) {
+      console.error(
+        "Delete assignment error:",
+        error.message
+      );
+
+      return res.status(500).json({
+        error: "Could not delete assignment.",
       });
     }
-
-    const [result] = await pool.execute(
-      `DELETE FROM assignments
-       WHERE id = ? AND user_uid = ?`,
-      [id, req.firebaseUser.uid]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        error: "Assignment not found.",
-      });
-    }
-
-    return res.json({
-      message: "Assignment deleted successfully.",
-    });
-  } catch (error) {
-    console.error("Delete assignment error:", error.message);
-
-    return res.status(500).json({
-      error: "Could not delete assignment.",
-    });
   }
-});
+);
 
 // =====================================================
 // 14. START SERVER
 // =====================================================
 
 const server = app.listen(PORT, () => {
-  console.log(`ClassConnect server running on port ${PORT}`);
+  console.log(
+    `ClassConnect server running on port ${PORT}`
+  );
 });
 
 // =====================================================
 // 15. GRACEFUL SHUTDOWN
 // =====================================================
 
+let isShuttingDown = false;
+
 async function shutdown() {
+  if (isShuttingDown) {
+    return;
+  }
+
+  isShuttingDown = true;
+
   console.log("Shutting down ClassConnect server...");
 
   server.close(async () => {
     try {
       await pool.end();
+
       console.log("Database connection pool closed.");
+
       process.exit(0);
     } catch (error) {
-      console.error("Shutdown error:", error.message);
+      console.error(
+        "Shutdown error:",
+        error.message
+      );
+
       process.exit(1);
     }
   });
