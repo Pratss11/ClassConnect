@@ -10,3 +10,12 @@ server/node_modules/
 .DS_Store
 server/serviceAccountKey.json
 server/ca.pem
+*.backup
+server/node_modules copy/
+server/node_modules/
+.env
+server/.env
+ca.pem
+server/ca.pem
+serviceAccountKey.json
+server/serviceAccountKey.json
