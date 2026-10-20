@@ -104,7 +104,23 @@ module.exports = function createClassroomOAuthRouter({
   }
 
   // =====================================================
+  // SAVE TOKENS
+  // =====================================================
+
+  async function saveUserTokens(userUid, tokens) {
+    await pool.execute(
+      `INSERT INTO classroom_tokens
+       (user_uid, encrypted_tokens)
+       VALUES (?, ?)
+       ON DUPLICATE KEY UPDATE
+       encrypted_tokens = VALUES(encrypted_tokens)`,
+      [userUid, encryptTokens(tokens)]
+    );
+  }
+
+  // =====================================================
   // GET USER'S SAVED GOOGLE TOKENS
+  // REFRESH EXPIRED ACCESS TOKENS
   // =====================================================
 
   async function getUserOAuthClient(userUid) {
@@ -121,28 +137,22 @@ module.exports = function createClassroomOAuthRouter({
     }
 
     const oauth = createOAuthClient();
-    const tokens = decryptTokens(rows[0].encrypted_tokens);
+
+    let tokens = decryptTokens(rows[0].encrypted_tokens);
 
     oauth.setCredentials(tokens);
 
-    // Save refreshed tokens without exposing them to the browser.
+    // Persist credentials when the Google library refreshes them.
     oauth.on("tokens", async (newTokens) => {
       try {
-        const updatedTokens = {
+        tokens = {
           ...tokens,
           ...newTokens,
           refresh_token:
             newTokens.refresh_token || tokens.refresh_token,
         };
 
-        await pool.execute(
-          `UPDATE classroom_tokens
-           SET encrypted_tokens = ?
-           WHERE user_uid = ?`,
-          [encryptTokens(updatedTokens), userUid]
-        );
-
-        Object.assign(tokens, updatedTokens);
+        await saveUserTokens(userUid, tokens);
       } catch (error) {
         console.error(
           "Failed to save refreshed Classroom tokens:",
@@ -150,6 +160,41 @@ module.exports = function createClassroomOAuthRouter({
         );
       }
     });
+
+    // Refresh before making Classroom API requests if necessary.
+    if (
+      !tokens.access_token ||
+      !tokens.expiry_date ||
+      tokens.expiry_date <= Date.now() + 60_000
+    ) {
+      if (!tokens.refresh_token) {
+        throw new Error(
+          "Google refresh token is missing. Reconnect Google Classroom."
+        );
+      }
+
+      try {
+        const { credentials } = await oauth.refreshAccessToken();
+
+        tokens = {
+          ...tokens,
+          ...credentials,
+          refresh_token:
+            credentials.refresh_token || tokens.refresh_token,
+        };
+
+        oauth.setCredentials(tokens);
+
+        await saveUserTokens(userUid, tokens);
+      } catch (error) {
+        console.error(
+          "Google Classroom token refresh failed:",
+          error.response?.data || error.message
+        );
+
+        throw error;
+      }
+    }
 
     return oauth;
   }
@@ -166,7 +211,7 @@ module.exports = function createClassroomOAuthRouter({
   ];
 
   // =====================================================
-  // HELPER: FETCH PAGINATED RESULTS
+  // PAGINATION HELPER
   // =====================================================
 
   async function listAll(fetchPage) {
@@ -184,7 +229,7 @@ module.exports = function createClassroomOAuthRouter({
   }
 
   // =====================================================
-  // HELPER: HANDLE OPTIONAL COURSE RESOURCES
+  // OPTIONAL RESOURCE HELPER
   // =====================================================
 
   async function fetchOptionalResources(
@@ -196,20 +241,21 @@ module.exports = function createClassroomOAuthRouter({
       return await fetchFunction();
     } catch (error) {
       const status = Number(
-        error.code || error.response?.status || 0
+        error.response?.status || error.code || 0
       );
 
       console.error(
         `Classroom ${resourceName} error for course ${courseId}:`,
         status,
-        error.message
+        error.response?.data || error.message
       );
 
-      // Continue loading other resources if one resource is forbidden.
+      // These errors may indicate inaccessible optional resources.
       if (status === 403 || status === 404) {
         return [];
       }
 
+      // Do not silently treat authentication failures as empty data.
       throw error;
     }
   }
@@ -233,9 +279,7 @@ module.exports = function createClassroomOAuthRouter({
           .update(state)
           .digest("hex");
 
-        const expiresAt = new Date(
-          Date.now() + 10 * 60 * 1000
-        );
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
         await pool.execute(
           "DELETE FROM classroom_oauth_states WHERE expires_at < NOW()"
@@ -260,7 +304,7 @@ module.exports = function createClassroomOAuthRouter({
       } catch (error) {
         console.error(
           "Classroom connect error:",
-          error.message
+          error.response?.data || error.message
         );
 
         return res.status(500).json({
@@ -287,7 +331,7 @@ module.exports = function createClassroomOAuthRouter({
         return res
           .status(400)
           .send(
-            "Google Classroom connection was cancelled or denied. Return to ClassConnect and try again."
+            "Google Classroom authorization was denied. Return to ClassConnect and try again."
           );
       }
 
@@ -337,8 +381,10 @@ module.exports = function createClassroomOAuthRouter({
       }
 
       const oauth = createOAuthClient();
+
       const { tokens } = await oauth.getToken(code);
 
+      // Preserve the old refresh token if Google doesn't issue a new one.
       const [existingRows] = await pool.execute(
         `SELECT encrypted_tokens
          FROM classroom_tokens
@@ -354,8 +400,11 @@ module.exports = function createClassroomOAuthRouter({
           previousTokens = decryptTokens(
             existingRows[0].encrypted_tokens
           );
-        } catch {
-          previousTokens = {};
+        } catch (error) {
+          console.error(
+            "Could not decrypt previous Classroom tokens:",
+            error.message
+          );
         }
       }
 
@@ -370,18 +419,11 @@ module.exports = function createClassroomOAuthRouter({
         return res
           .status(400)
           .send(
-            "Google did not provide a refresh token. Check your Google account permissions and reconnect."
+            "Google did not provide a refresh token. Reconnect with the correct Google account and permissions."
           );
       }
 
-      await pool.execute(
-        `INSERT INTO classroom_tokens
-         (user_uid, encrypted_tokens)
-         VALUES (?, ?)
-         ON DUPLICATE KEY UPDATE
-         encrypted_tokens = VALUES(encrypted_tokens)`,
-        [userUid, encryptTokens(mergedTokens)]
-      );
+      await saveUserTokens(userUid, mergedTokens);
 
       return res.redirect(
         "https://class-connect-server-mocha.vercel.app/?classroom=connected"
@@ -389,7 +431,7 @@ module.exports = function createClassroomOAuthRouter({
     } catch (error) {
       console.error(
         "Classroom OAuth callback failed:",
-        error.message
+        error.response?.data || error.message
       );
 
       return res
@@ -437,12 +479,6 @@ module.exports = function createClassroomOAuthRouter({
   // =====================================================
   // FETCH ALL CLASSROOM DATA
   // GET /api/classroom/data
-  //
-  // Returns:
-  // courses
-  // coursework
-  // announcements
-  // materials
   // =====================================================
 
   router.get(
@@ -466,10 +502,7 @@ module.exports = function createClassroomOAuthRouter({
           auth: oauth,
         });
 
-        // -------------------------------------------------
-        // 1. FETCH COURSES
-        // -------------------------------------------------
-
+        // 1. Fetch active courses.
         const courses = await listAll(async (pageToken) => {
           const response = await classroom.courses.list({
             pageSize: 100,
@@ -487,82 +520,77 @@ module.exports = function createClassroomOAuthRouter({
         const announcements = [];
         const materials = [];
 
-        // -------------------------------------------------
-        // 2. FETCH EACH COURSE'S RESOURCES
-        // -------------------------------------------------
-
+        // 2. Fetch resources for each course.
         for (const course of courses.slice(0, 50)) {
           const courseId = course.id;
 
-          // Fetch assignments, announcements and materials.
-          const [courseWorkItems, announcementItems, materialItems] =
-            await Promise.all([
-              fetchOptionalResources(
-                "coursework",
-                courseId,
-                () =>
-                  listAll(async (pageToken) => {
-                    const response =
-                      await classroom.courses.courseWork.list({
-                        courseId,
-                        pageSize: 100,
-                        pageToken,
-                        orderBy: "dueDate asc",
-                      });
+          const [
+            courseWorkItems,
+            announcementItems,
+            materialItems,
+          ] = await Promise.all([
+            fetchOptionalResources(
+              "coursework",
+              courseId,
+              () =>
+                listAll(async (pageToken) => {
+                  const response =
+                    await classroom.courses.courseWork.list({
+                      courseId,
+                      pageSize: 100,
+                      pageToken,
+                      orderBy: "dueDate asc",
+                    });
 
-                    return {
-                      data: response.data.courseWork || [],
-                      nextPageToken: response.data.nextPageToken,
-                    };
-                  })
-              ),
+                  return {
+                    data: response.data.courseWork || [],
+                    nextPageToken: response.data.nextPageToken,
+                  };
+                })
+            ),
 
-              fetchOptionalResources(
-                "announcements",
-                courseId,
-                () =>
-                  listAll(async (pageToken) => {
-                    const response =
-                      await classroom.courses.announcements.list({
-                        courseId,
-                        pageSize: 100,
-                        pageToken,
-                        orderBy: "updateTime desc",
-                      });
+            fetchOptionalResources(
+              "announcements",
+              courseId,
+              () =>
+                listAll(async (pageToken) => {
+                  const response =
+                    await classroom.courses.announcements.list({
+                      courseId,
+                      pageSize: 100,
+                      pageToken,
+                      orderBy: "updateTime desc",
+                    });
 
-                    return {
-                      data: response.data.announcements || [],
-                      nextPageToken: response.data.nextPageToken,
-                    };
-                  })
-              ),
+                  return {
+                    data: response.data.announcements || [],
+                    nextPageToken: response.data.nextPageToken,
+                  };
+                })
+            ),
 
-              fetchOptionalResources(
-                "materials",
-                courseId,
-                () =>
-                  listAll(async (pageToken) => {
-                    const response =
-                      await classroom.courses.courseWorkMaterials.list({
-                        courseId,
-                        pageSize: 100,
-                        pageToken,
-                        orderBy: "updateTime desc",
-                      });
+            fetchOptionalResources(
+              "materials",
+              courseId,
+              () =>
+                listAll(async (pageToken) => {
+                  const response =
+                    await classroom.courses.courseWorkMaterials.list({
+                      courseId,
+                      pageSize: 100,
+                      pageToken,
+                      orderBy: "updateTime desc",
+                    });
 
-                    return {
-                      data:
-                        response.data.courseWorkMaterial || [],
-                      nextPageToken: response.data.nextPageToken,
-                    };
-                  })
-              ),
-            ]);
+                  return {
+                    data: response.data.courseWorkMaterial || [],
+                    nextPageToken: response.data.nextPageToken,
+                  };
+                })
+            ),
+          ]);
 
-          // -------------------------------------------------
-          // 3. FORMAT ASSIGNMENTS
-          // -------------------------------------------------
-
+          // 3. Format assignments.
           for (const item of courseWorkItems) {
             const dueDateText = item.dueDate
               ? [
@@ -580,10 +608,7 @@ module.exports = function createClassroomOAuthRouter({
             });
           }
 
-          // -------------------------------------------------
-          // 4. FORMAT ANNOUNCEMENTS
-          // -------------------------------------------------
-
+          // 4. Format announcements.
           for (const item of announcementItems) {
             announcements.push({
               ...item,
@@ -592,14 +617,10 @@ module.exports = function createClassroomOAuthRouter({
             });
           }
 
-          // -------------------------------------------------
-          // 5. FORMAT STUDY MATERIALS AND PDF LINKS
-          // -------------------------------------------------
-
+          // 5. Format study materials and attachments.
           for (const item of materialItems) {
             const links = [];
 
-            // Links and files attached to a material.
             for (const attachment of item.materials || []) {
               if (attachment.driveFile?.driveFile) {
                 const file = attachment.driveFile.driveFile;
@@ -650,10 +671,7 @@ module.exports = function createClassroomOAuthRouter({
           }
         }
 
-        // -------------------------------------------------
-        // 6. SORT ASSIGNMENTS BY DUE DATE
-        // -------------------------------------------------
-
+        // 6. Sort assignments by due date.
         coursework.sort((a, b) => {
           const dateA = a.dueDate
             ? Date.UTC(
@@ -674,30 +692,25 @@ module.exports = function createClassroomOAuthRouter({
           return dateA - dateB;
         });
 
-        // -------------------------------------------------
-        // 7. SORT ANNOUNCEMENTS BY RECENT UPDATE
-        // -------------------------------------------------
-
+        // 7. Sort announcements by latest update.
         announcements.sort((a, b) =>
-          String(b.updateTime || b.creationTime || "").localeCompare(
+          String(
+            b.updateTime || b.creationTime || ""
+          ).localeCompare(
             String(a.updateTime || a.creationTime || "")
           )
         );
 
-        // -------------------------------------------------
-        // 8. SORT MATERIALS BY RECENT UPDATE
-        // -------------------------------------------------
-
+        // 8. Sort materials by latest update.
         materials.sort((a, b) =>
-          String(b.updateTime || b.creationTime || "").localeCompare(
+          String(
+            b.updateTime || b.creationTime || ""
+          ).localeCompare(
             String(a.updateTime || a.creationTime || "")
           )
         );
 
-        // -------------------------------------------------
-        // 9. RETURN COMPLETE DATA
-        // -------------------------------------------------
-
+        // 9. Return all resources and totals.
         return res.json({
           success: true,
           courses,
@@ -719,13 +732,21 @@ module.exports = function createClassroomOAuthRouter({
         console.error(
           "Classroom data fetch failed:",
           status,
-          error.message
+          error.response?.data || error.message
         );
 
-        if (status === 401 || status === 403) {
-          return res.status(status).json({
+        if (status === 401) {
+          return res.status(401).json({
             error:
-              "Google denied access to Classroom data. Check the granted permissions and Google Classroom API settings.",
+              "Google Classroom authorization expired or was rejected. Reconnect Google Classroom.",
+            reconnectRequired: true,
+          });
+        }
+
+        if (status === 403) {
+          return res.status(403).json({
+            error:
+              "Google denied access. Check Classroom API enablement, account access, and the permissions granted.",
           });
         }
 
