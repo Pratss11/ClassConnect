@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#eaf3ff">
+<meta name="theme-color" content="#11172a">
 
-<title>ClassConnect | Student Workspace</title>
+<title>ClassConnect | Premium Student Workspace</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -741,10 +741,6 @@ h3 {
   transform: translateY(0);
 }
 
-25% { opacity: .9; }
-  100% { opacity: 0; transform: translate(-50%,-50%) scale(1.7); }
-}
-
 @keyframes appear {
   from { opacity: 0; transform: translateY(7px); }
   to { opacity: 1; transform: translateY(0); }
@@ -763,6 +759,7 @@ h3 {
   .brand { min-width: 0; flex: 1; font-size: 21px; }
   .brand-mark { width: 39px; height: 39px; }
   .profile { margin-left: 0; }
+  #logoutBtn { padding:9px 10px; font-size:11px; }
   .profile .profile-text { display: none; }
   .searchbar { order: 3; flex: 1 0 100%; max-width: none; }
   .layout { display: block; padding: 12px; padding-bottom: 82px; }
@@ -856,36 +853,110 @@ h1,h2,h3,.subject-name,.material-info h3,.task-content strong{color:#f4f6ff}.tex
 @media(max-width:760px){.topbar{background:rgba(12,16,32,.86)}.layout{padding:10px}.hero{border-radius:20px}.panel{border-radius:19px}.subject-card{border-radius:18px}}
 
 
-/* Premium logout control; no tap/click bokeh effect */
-.topbar .logout-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;padding:10px 14px;border-radius:12px;background:rgba(70,100,170,.14);color:#dce8ff;border:1px solid rgba(130,165,235,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s}
-.topbar .logout-btn i{color:#9fc1ff}
-.topbar .logout-btn:hover{background:rgba(75,115,200,.25);border-color:rgba(140,180,255,.5)}
-.topbar .logout-btn:disabled{opacity:.6;cursor:wait}
-.dashboard-folder{margin:18px 0 22px;padding:20px;scroll-margin-top:20px}
-.folder-head{align-items:flex-start;gap:14px}
-.folder-head h2{margin:5px 0 4px}
-.folder-toolbar{margin:16px 0}
-.folder-materials{display:grid;gap:10px}
-.folder-materials .empty{padding:24px}
-.auth-gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(5,9,20,.88);backdrop-filter:blur(18px)}
-.auth-gate[hidden]{display:none!important}
-.auth-card{width:min(440px,100%);padding:30px;border-radius:24px;background:rgba(17,25,46,.96);border:1px solid rgba(150,177,230,.22);box-shadow:0 25px 90px rgba(0,0,0,.4)}
-.auth-brand{min-width:0;margin-bottom:24px;font-size:23px}
-.auth-card h1{font-size:27px;margin:0 0 8px;color:#f1f5ff}
-.auth-form{display:grid;gap:14px;margin-top:22px}
-.auth-form label{display:grid;gap:7px;color:#dce6ff;font-size:13px}
-.auth-form input{width:100%;padding:12px 13px;border-radius:11px;border:1px solid rgba(150,177,230,.25);background:rgba(255,255,255,.06);color:#fff;outline:none}
-.auth-form input:focus{border-color:#83aaff}
-.auth-submit,.auth-google{width:100%;justify-content:center;margin-top:3px}
-.auth-google{margin-top:10px}
-.auth-error{color:#ff9da8;min-height:20px;font-size:13px}
-body.signed-out .topbar,body.signed-out .layout,body.signed-out .mobile-nav{display:none!important}
-@media(max-width:760px){.topbar .logout-btn{padding:9px 10px;gap:6px;font-size:12px}.dashboard-folder{padding:14px}.folder-head{flex-wrap:wrap}.folder-head .secondary-btn{width:100%}.auth-card{padding:24px}}
+/* Settings page */
+.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.settings-card{padding:20px;border-radius:20px;min-width:0}
+.settings-card h3{margin:0 0 6px;font-size:16px}.settings-card .muted{font-size:12px;line-height:1.6}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 0;border-bottom:1px solid rgba(150,165,200,.16)}
+.settings-row:last-child{border-bottom:0}.settings-row label{font-size:13px;font-weight:600}.settings-row small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:4px}
+.settings-input{width:100%;padding:11px 12px;border:1px solid rgba(150,165,200,.28);border-radius:11px;background:rgba(255,255,255,.06);color:inherit;outline:none}
+.settings-input option{color:#18233b}.settings-field{margin:12px 0}.settings-field label{display:block;font-size:12px;font-weight:600;margin-bottom:7px}
+.settings-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.settings-actions button{margin:0}
+.settings-toggle{width:42px;height:24px;position:relative;flex-shrink:0}.settings-toggle input{opacity:0;width:0;height:0}.settings-toggle span{position:absolute;inset:0;border-radius:30px;background:#6c7890;cursor:pointer;transition:.2s}.settings-toggle span:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}.settings-toggle input:checked+span{background:var(--blue)}.settings-toggle input:checked+span:before{transform:translateX(18px)}
+body.light-mode{color:#17243d!important;background:radial-gradient(ellipse at 5% 10%,#d7e7ff 0,transparent 35%),radial-gradient(ellipse at 90% 15%,#c9e9ff 0,transparent 35%),linear-gradient(135deg,#f4f7ff,#e7f2ff 50%,#f5faff)!important}
+body.light-mode .glass,body.light-mode .panel,body.light-mode .sidebar,body.light-mode .subject-card,body.light-mode .hero,body.light-mode .modal-card{background:rgba(255,255,255,.82)!important;border-color:rgba(100,125,170,.22)!important;color:#17243d!important}
+body.light-mode .settings-input{background:rgba(255,255,255,.8);color:#17243d}
+body.reduce-motion *,body.reduce-motion *:before,body.reduce-motion *:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+@media(max-width:760px){.settings-grid{grid-template-columns:1fr}.settings-card{padding:16px}}
+
+
+/* Firebase sign-in gate: keep the dashboard hidden until a user is signed in. */
+#authGate { display:none; min-height:100vh; box-sizing:border-box; place-items:center; padding:24px; position:relative; z-index:10000; }
+#authGate .auth-card { width:min(100%,420px); padding:28px; border:1px solid rgba(167,139,250,.28); border-radius:22px; background:linear-gradient(145deg,#201b37,#11101e); color:#f5f3ff; box-shadow:0 24px 70px rgba(0,0,0,.38); }
+#authGate h1 { margin:0 0 8px; font-size:28px; }
+#authGate p { color:#aaa7c4; line-height:1.5; }
+#authGate label { display:block; margin:14px 0 6px; font-size:13px; }
+#authGate input { box-sizing:border-box; width:100%; padding:12px 14px; border:1px solid #393452; border-radius:10px; background:#171528; color:#fff; font:inherit; }
+#authGate button { width:100%; margin-top:14px; padding:12px 16px; border:0; border-radius:10px; background:#7955f6; color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+#authGate button.secondary { background:#302b49; }
+#authGate button:disabled { opacity:.6; cursor:wait; }
+#authGate #authGateMessage { min-height:20px; color:#fda4af; font-size:13px; }
+body.auth-required > :not(.ambient):not(.grain):not(#authGate):not(script) { display:none !important; }
+body.auth-required #authGate { display:grid !important; }
+
+
+
+/* Compact, responsive AI Study Assistant: deliberately not oversized. */
+#ai-study-assistant.ai-study-section {
+  width: 100%; max-width: 100%; margin: 18px 0 24px; padding: 16px;
+  border: 1px solid rgba(167,139,250,.24); border-radius: 18px;
+  background: linear-gradient(145deg, rgba(26,24,47,.96), rgba(14,14,27,.98));
+  color: #f5f3ff; box-shadow: 0 10px 28px rgba(0,0,0,.16);
+}
+#ai-study-assistant .ai-study-header {
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  flex-wrap:wrap; margin:0 0 12px;
+}
+#ai-study-assistant .ai-study-header h2 { margin:0; font-size:20px; line-height:1.35; color:#f5f3ff; }
+#ai-study-assistant .ai-study-header p { margin:0; color:#aaa7c4; font-size:12px; line-height:1.5; }
+#ai-study-assistant .ai-chat-container { overflow:hidden; border:1px solid rgba(167,139,250,.20); border-radius:13px; background:rgba(8,8,20,.48); }
+#ai-study-assistant .ai-chat-messages {
+  display:flex; flex-direction:column; gap:9px; min-height:78px; max-height:210px;
+  overflow-y:auto; padding:12px;
+}
+#ai-study-assistant .ai-message {
+  max-width:min(88%,680px); padding:10px 12px; border-radius:12px;
+  font-size:13px; line-height:1.5; white-space:pre-wrap; overflow-wrap:anywhere;
+}
+#ai-study-assistant .ai-message.assistant { align-self:flex-start; color:#e9e5ff; background:#24213c; border-bottom-left-radius:4px; }
+#ai-study-assistant .ai-message.user { align-self:flex-end; color:#fff; background:#6d4aff; border-bottom-right-radius:4px; }
+#ai-study-assistant .ai-message.error { color:#fecaca; background:rgba(127,29,29,.40); }
+#ai-study-assistant .ai-chat-form { display:flex; align-items:center; gap:8px; padding:10px; border-top:1px solid rgba(167,139,250,.16); }
+#ai-study-assistant .ai-chat-form input {
+  flex:1; min-width:0; padding:11px 13px; border:1px solid #393452; border-radius:10px;
+  outline:none; background:#171528; color:#fff; font:inherit; font-size:13px;
+}
+#ai-study-assistant .ai-chat-form input:focus { border-color:#8b5cf6; }
+#ai-study-assistant .ai-chat-form button {
+  flex:0 0 auto; padding:11px 18px; border:0; border-radius:10px;
+  background:#7955f6; color:#fff; font:inherit; font-size:13px; font-weight:700; cursor:pointer;
+}
+#ai-study-assistant .ai-chat-form button:disabled { opacity:.6; cursor:wait; }
+#ai-study-assistant .ai-chat-note { margin:0; padding:0 10px 10px; color:#8985a7; font-size:10px; }
+@media(max-width:600px) {
+  #ai-study-assistant.ai-study-section { padding:12px; margin:14px 0 20px; }
+  #ai-study-assistant .ai-study-header h2 { font-size:18px; }
+  #ai-study-assistant .ai-study-header p { flex-basis:100%; }
+  #ai-study-assistant .ai-chat-messages { max-height:190px; padding:10px; }
+  #ai-study-assistant .ai-message { max-width:95%; }
+  #ai-study-assistant .ai-chat-form { gap:7px; padding:8px; }
+  #ai-study-assistant .ai-chat-form input { padding:10px; }
+  #ai-study-assistant .ai-chat-form button { padding:10px 13px; }
+}
 
 </style>
 </head>
 
-<body>
+<body class="auth-required">
+
+<div id="authGate" hidden>
+  <div class="auth-card">
+    <div class="brand" style="margin-bottom:18px">Class<span>Connect</span></div>
+    <h1 id="authGateHeading">Welcome back</h1>
+    <p id="authGateSubtitle">Sign in to continue to your student dashboard.</p>
+    <form id="authGateForm">
+      <label for="authGateEmail">Email address</label>
+      <input id="authGateEmail" type="email" autocomplete="email" required placeholder="you@example.com">
+      <label for="authGatePassword">Password</label>
+      <input id="authGatePassword" type="password" autocomplete="current-password" required minlength="6" placeholder="At least 6 characters">
+      <button id="authGateSubmit" type="submit">Sign in</button>
+    </form>
+    <button id="authGateToggle" class="secondary" type="button">Create an account</button>
+    <button id="authGateForgot" class="secondary" type="button">Forgot password?</button>
+    <p id="authGateMessage" role="status" aria-live="polite"></p>
+  </div>
+</div>
+
 
 <header class="topbar">
   <div class="brand">
@@ -900,10 +971,6 @@ body.signed-out .topbar,body.signed-out .layout,body.signed-out .mobile-nav{disp
       aria-label="Search ClassConnect">
   </label>
 
-  <button id="logoutBtn" class="logout-btn" type="button" aria-label="Log out of ClassConnect">
-    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>Logout</span>
-  </button>
-
   <div class="profile">
     <div class="avatar" id="avatar">P</div>
     <div class="profile-text">
@@ -911,6 +978,7 @@ body.signed-out .topbar,body.signed-out .layout,body.signed-out .mobile-nav{disp
       <div class="muted" id="profileCourse">TE AIML</div>
     </div>
   </div>
+  <button class="secondary-btn" id="logoutBtn" type="button" title="Sign out of ClassConnect" style="white-space:nowrap"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
 </header>
 
 <div class="layout">
@@ -969,15 +1037,6 @@ body.signed-out .topbar,body.signed-out .layout,body.signed-out .mobile-nav{disp
       </div>
 
       <div class="subject-grid" id="dashboardSubjects"></div>
-
-      <section id="dashboardSubjectFolder" class="panel glass dashboard-folder" hidden aria-live="polite">
-        <div class="panel-head folder-head">
-          <div><div class="eyebrow">SUBJECT FOLDER</div><h2 id="dashboardFolderTitle">Subject materials</h2><p class="muted" id="dashboardFolderStats"></p></div>
-          <button class="secondary-btn" id="closeDashboardFolder" type="button"><i class="fa-solid fa-arrow-left"></i> Back to subjects</button>
-        </div>
-        <div class="toolbar folder-toolbar"><input id="dashboardFolderSearch" type="search" placeholder="Search this subject..."><select id="dashboardFolderFilter"><option value="all">All materials</option><option value="pending">Pending</option><option value="done">Completed</option></select></div>
-        <div id="dashboardFolderMaterials" class="folder-materials"></div>
-      </section>
 
       <div class="dashboard-grid">
 
@@ -1117,6 +1176,54 @@ body.signed-out .topbar,body.signed-out .layout,body.signed-out .mobile-nav{disp
       </div>
     </section>
 
+
+    <!-- SETTINGS -->
+    <section class="page-view" id="page-settings">
+      <div class="section-head"><div><h2>Settings</h2><p class="muted">Personalize your ClassConnect workspace.</p></div></div>
+      <div class="settings-grid">
+        <section class="panel glass settings-card">
+          <h3>👤 Profile</h3><p class="muted">Your student details for this workspace.</p>
+          <div class="settings-field"><label for="settingName">Student name</label><input class="settings-input" id="settingName" placeholder="Your name"></div>
+          <div class="settings-field"><label for="settingCourse">Course / department</label><input class="settings-input" id="settingCourse" placeholder="e.g. TE AIML"></div>
+          <div class="settings-field"><label for="settingCollege">College name (optional)</label><input class="settings-input" id="settingCollege" placeholder="Your college"></div>
+          <div class="settings-field"><label for="settingEmail">Signed-in email</label><input class="settings-input" id="settingEmail" readonly placeholder="Sign in to see email"></div>
+          <div class="settings-actions"><button class="primary-btn" id="saveProfileBtn">Save profile</button></div>
+        </section>
+        <section class="panel glass settings-card">
+          <h3>🎨 Appearance</h3><p class="muted">Choose how ClassConnect looks on this device.</p>
+          <div class="settings-row"><div><label for="settingTheme">Light mode</label><small>Switch between dark and light appearance</small></div><label class="settings-toggle"><input type="checkbox" id="settingTheme"><span></span></label></div>
+          <div class="settings-field"><label for="settingAccent">Accent color</label><select class="settings-input" id="settingAccent"><option value="#3987ff">Blue</option><option value="#8b5cf6">Violet</option><option value="#14b8a6">Teal</option><option value="#ec4899">Pink</option><option value="#f59e0b">Amber</option></select></div>
+          <div class="settings-row"><div><label for="settingMotion">Animations</label><small>Reduce interface animations</small></div><label class="settings-toggle"><input type="checkbox" id="settingMotion" checked><span></span></label></div>
+        </section>
+        <section class="panel glass settings-card">
+          <h3>🔔 Notifications</h3><p class="muted">Choose which reminders you want enabled.</p>
+          <div class="settings-row"><div><label>Assignment reminders</label><small>Remind about upcoming deadlines</small></div><label class="settings-toggle"><input type="checkbox" data-pref="notifyAssignments" checked><span></span></label></div>
+          <div class="settings-row"><div><label>Overdue tasks</label><small>Highlight tasks past their due date</small></div><label class="settings-toggle"><input type="checkbox" data-pref="notifyOverdue" checked><span></span></label></div>
+          <div class="settings-row"><div><label>Classroom announcements</label><small>Show announcement updates in the app</small></div><label class="settings-toggle"><input type="checkbox" data-pref="notifyAnnouncements" checked><span></span></label></div>
+          <p class="muted">These switches save your preferences. Browser push notifications require a separate notification service.</p>
+        </section>
+        <section class="panel glass settings-card">
+          <h3>🔗 Google Classroom</h3><p class="muted">Manage your Classroom connection and refresh synced content.</p>
+          <div class="settings-row"><div><label>Connection status</label><small id="settingsClassroomStatus">Check connection by syncing your Classroom.</small></div><i class="fa-solid fa-circle-nodes" style="color:var(--blue)"></i></div>
+          <div class="settings-row"><div><label>Last sync attempt</label><small id="settingsLastSync">Not synced in this session.</small></div></div>
+          <div class="settings-actions"><button class="primary-btn" id="settingsSyncBtn"><i class="fa-solid fa-rotate"></i> Sync now</button><button class="secondary-btn" id="settingsConnectBtn">Connect / Reconnect</button></div>
+        </section>
+        <section class="panel glass settings-card">
+          <h3>📚 Study Preferences</h3><p class="muted">Set your target and preferred material view.</p>
+          <div class="settings-field"><label for="settingGoal">Daily study goal (hours)</label><select class="settings-input" id="settingGoal"><option value="1">1 hour</option><option value="2">2 hours</option><option value="3">3 hours</option><option value="4">4 hours</option><option value="5">5 hours</option><option value="6">6 hours</option></select></div>
+          <div class="settings-field"><label for="settingMaterialFilter">Default material filter</label><select class="settings-input" id="settingMaterialFilter"><option value="all">All materials</option><option value="pending">Pending only</option><option value="done">Completed only</option></select></div>
+          <div class="settings-field"><label for="settingSort">Assignment sorting</label><select class="settings-input" id="settingSort"><option value="due">Due date first</option><option value="new">Recently added first</option></select></div>
+          <div class="settings-actions"><button class="primary-btn" id="saveStudyPrefsBtn">Save study preferences</button></div>
+        </section>
+        <section class="panel glass settings-card">
+          <h3>🔐 Security & About</h3><p class="muted">Manage your session and learn about the app.</p>
+          <div class="settings-row"><div><label>Account</label><small id="settingsAccountText">Firebase sign-in status will appear here.</small></div></div>
+          <div class="settings-actions"><button class="secondary-btn" id="settingsLogoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Sign out</button><button class="secondary-btn" id="resetSettingsBtn">Reset preferences</button></div>
+          <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(150,165,200,.16)"><strong>ClassConnect</strong><p class="muted">Student workspace for subjects, study materials, assignments, planner and Google Classroom integration.</p><small class="muted">Version 1.0 · Built for learning</small></div>
+        </section>
+      </div>
+    </section>
+
     <!-- NOTES -->
     <section class="page-view" id="page-notes">
       <div class="section-head">
@@ -1139,6 +1246,47 @@ body.signed-out .topbar,body.signed-out .layout,body.signed-out .mobile-nav{disp
         <div id="notesList" style="margin-top:18px"></div>
       </div>
     </section>
+    <!-- CLASSCONNECT AI STUDY ASSISTANT -->
+<section class="ai-study-section" id="ai-study-assistant">
+
+    <div class="ai-study-header">
+        <h2>🤖 AI Study Assistant</h2>
+        <p>Your personal AI tutor for learning and exam preparation.</p>
+    </div>
+
+    <div class="ai-chat-container">
+
+        <div class="ai-chat-messages" id="ai-chat-messages">
+            <div class="ai-message assistant">
+                Hi! I'm your ClassConnect AI Study Assistant.
+                Ask me about Python, AIML, DSA, or any college subject.
+            </div>
+        </div>
+
+        <form id="ai-chat-form" class="ai-chat-form">
+
+            <input
+                type="text"
+                id="ai-chat-input"
+                placeholder="Ask your study question..."
+                maxlength="4000"
+                autocomplete="off"
+                required
+            >
+
+            <button type="submit" id="ai-send-button">
+                Send
+            </button>
+
+        </form>
+
+        <p class="ai-chat-note">
+            AI can make mistakes. Verify important academic information.
+        </p>
+
+    </div>
+
+</section>
 
   </main>
 </div>
@@ -1228,21 +1376,6 @@ body.signed-out .topbar,body.signed-out .layout,body.signed-out .mobile-nav{disp
   </div>
 </div>
 
-<section id="signedOutGate" class="auth-gate" hidden aria-labelledby="authGateTitle">
-  <div class="auth-card glass">
-    <div class="brand auth-brand"><div class="brand-mark"><i class="fa-solid fa-book-open"></i></div><div>Class<span>Connect</span></div></div>
-    <h1 id="authGateTitle">You’re signed out</h1>
-    <p class="muted">Sign in again to return to your study workspace.</p>
-    <form id="reloginForm" class="auth-form">
-      <label>Email address<input id="reloginEmail" type="email" autocomplete="username" required placeholder="you@example.com"></label>
-      <label>Password<input id="reloginPassword" type="password" autocomplete="current-password" required placeholder="Your password"></label>
-      <button class="primary-btn auth-submit" type="submit">Sign in</button>
-    </form>
-    <button id="googleReloginBtn" class="secondary-btn auth-google" type="button"><i class="fa-brands fa-google"></i> Continue with Google</button>
-    <p id="authGateError" class="auth-error" role="alert"></p>
-  </div>
-</section>
-
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -1322,7 +1455,8 @@ function showPage(page) {
     assignments:"Assignments",
     planner:"Study Planner",
     classroom:"Google Classroom",
-    notes:"My Notes"
+    notes:"My Notes",
+    settings:"Settings"
   };
 
   $("pageTitle").textContent = titles[page] || "ClassConnect";
@@ -2037,7 +2171,6 @@ async function loadClassroom() {
     renderSubjects();
     renderRecentMaterials();
     renderMaterials();
-    if (selectedSubject && $("dashboardSubjectFolder") && !$("dashboardSubjectFolder").hidden) renderDashboardSubjectFolder();
     renderAssignments();
     renderDashboardTasks();
     renderProgress();
@@ -2086,12 +2219,155 @@ $("materialFilter").addEventListener("change",renderMaterials);
 $("assignmentSearch").addEventListener("input",renderAssignments);
 $("assignmentFilter").addEventListener("change",renderAssignments);
 
-$("settingsBtn").addEventListener("click",() => {
-  toast("Settings: configure your profile and Firebase authentication.");
+$("settingsBtn").addEventListener("click",() => { showPage("settings"); loadSettingsUI(); });
+
+const SETTINGS_KEY = "classconnect-settings-v1";
+function getSettings(){ try{return {...JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}")};}catch(e){return {};}}
+function saveSettings(data){ localStorage.setItem(SETTINGS_KEY,JSON.stringify({...getSettings(),...data})); }
+function loadSettingsUI(){
+  const cfg=getSettings();
+  $("settingName").value=cfg.name || localStorage.getItem("cc_profile_name") || $("profileName")?.textContent || "";
+  $("settingCourse").value=cfg.course || localStorage.getItem("cc_profile_course") || $("profileCourse")?.textContent || "";
+  $("settingCollege").value=cfg.college||"";
+  const user=window.currentUser || (window.firebase?.auth ? firebase.auth().currentUser : null);
+  $("settingEmail").value=user?.email || "Not signed in";
+  $("settingsAccountText").textContent=user ? `Signed in${user.email ? " as "+user.email : ""}.` : "No Firebase user detected in this session.";
+  $("settingTheme").checked=cfg.theme==="light";
+  $("settingAccent").value=cfg.accent||"#3987ff";
+  $("settingMotion").checked=cfg.motion!==false;
+  document.querySelectorAll("[data-pref]").forEach(el=>el.checked=cfg[el.dataset.pref]!==false);
+  $("settingGoal").value=String(cfg.goal||2);
+  $("settingMaterialFilter").value=cfg.materialFilter||"all";
+  $("settingSort").value=cfg.sort||"due";
+  $("settingsClassroomStatus").textContent=cfg.classroomStatus||"Use Sync now to check the current connection.";
+  $("settingsLastSync").textContent=cfg.lastSync||"Not synced in this session.";
+  applySettingsAppearance();
+}
+function applySettingsAppearance(){
+  const cfg=getSettings();
+  document.documentElement.style.setProperty("--blue",cfg.accent||"#3987ff");
+  document.body.classList.toggle("light-mode",cfg.theme==="light");
+  document.body.classList.toggle("reduce-motion",cfg.motion===false);
+}
+$("saveProfileBtn").addEventListener("click",()=>{
+  const name=$("settingName").value.trim(); const course=$("settingCourse").value.trim(); const college=$("settingCollege").value.trim();
+  if(!name){toast("Please enter your name.");return;}
+  saveSettings({name,course,college});
+  if($("profileName")) $("profileName").textContent=name;
+  if($("profileCourse")) $("profileCourse").textContent=course;
+  if($("helloText")) $("helloText").textContent=`Hello, ${name.split(" ")[0]}! 👋`;
+  localStorage.setItem("cc_profile_name",name);localStorage.setItem("cc_profile_course",course);
+  toast("Profile saved on this device.");
 });
+$("settingTheme").addEventListener("change",e=>{saveSettings({theme:e.target.checked?"light":"dark"});applySettingsAppearance();});
+$("settingAccent").addEventListener("change",e=>{saveSettings({accent:e.target.value});applySettingsAppearance();});
+$("settingMotion").addEventListener("change",e=>{saveSettings({motion:e.target.checked});applySettingsAppearance();});
+document.querySelectorAll("[data-pref]").forEach(el=>el.addEventListener("change",()=>saveSettings({[el.dataset.pref]:el.checked})));
+$("saveStudyPrefsBtn").addEventListener("click",()=>{saveSettings({goal:Number($("settingGoal").value),materialFilter:$("settingMaterialFilter").value,sort:$("settingSort").value});toast("Study preferences saved.");});
+$("settingsSyncBtn").addEventListener("click",async()=>{saveSettings({lastSync:new Date().toLocaleString(),classroomStatus:"Sync in progress…"});loadSettingsUI();try{await loadClassroom();saveSettings({lastSync:new Date().toLocaleString(),classroomStatus:"Sync requested. Check Google Classroom page for results."});}catch(e){saveSettings({classroomStatus:"Sync failed. Check connection and try again."});}loadSettingsUI();});
+$("settingsConnectBtn").addEventListener("click",()=>connectClassroom());
+$("settingsLogoutBtn").addEventListener("click",()=>$("logoutBtn")?.click());
+$("resetSettingsBtn").addEventListener("click",()=>{if(!confirm("Reset saved appearance, notification and study preferences on this device?"))return;localStorage.removeItem(SETTINGS_KEY);loadSettingsUI();toast("Preferences reset.");});
+
+
+function setAuthGateMessage(message, success=false) {
+  const el = $("authGateMessage");
+  if (el) {
+    el.textContent = message || "";
+    el.style.color = success ? "#86efac" : "#fda4af";
+  }
+}
+
+function initAuthGate(auth) {
+  const form = $("authGateForm");
+  const submit = $("authGateSubmit");
+  const toggle = $("authGateToggle");
+  const forgot = $("authGateForgot");
+  const password = $("authGatePassword");
+  let mode = "login";
+
+  toggle.addEventListener("click", () => {
+    mode = mode === "login" ? "signup" : "login";
+    $("authGateHeading").textContent = mode === "signup" ? "Create your account" : "Welcome back";
+    $("authGateSubtitle").textContent = mode === "signup" ? "Create your ClassConnect student account." : "Sign in to continue to your student dashboard.";
+    submit.textContent = mode === "signup" ? "Create account" : "Sign in";
+    toggle.textContent = mode === "signup" ? "Back to sign in" : "Create an account";
+    password.autocomplete = mode === "signup" ? "new-password" : "current-password";
+    setAuthGateMessage("");
+  });
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const email = $("authGateEmail").value.trim();
+    const pass = password.value;
+    if (!email || pass.length < 6) {
+      setAuthGateMessage("Enter a valid email and a password of at least 6 characters.");
+      return;
+    }
+    submit.disabled = true;
+    toggle.disabled = true;
+    forgot.disabled = true;
+    submit.textContent = mode === "signup" ? "Creating account…" : "Signing in…";
+    try {
+      if (mode === "signup") await auth.createUserWithEmailAndPassword(email, pass);
+      else await auth.signInWithEmailAndPassword(email, pass);
+      setAuthGateMessage("Authentication successful. Opening your dashboard…", true);
+    } catch (error) {
+      console.error("ClassConnect authentication error:", error);
+      const messages = {
+        "auth/email-already-in-use":"This email already has an account. Sign in instead.",
+        "auth/invalid-email":"Enter a valid email address.",
+        "auth/weak-password":"Choose a stronger password.",
+        "auth/user-not-found":"Account not found. Create an account first.",
+        "auth/wrong-password":"Incorrect email or password.",
+        "auth/invalid-credential":"Incorrect email or password.",
+        "auth/operation-not-allowed":"Enable Email/Password sign-in in Firebase Authentication.",
+        "auth/network-request-failed":"Check your internet connection.",
+        "auth/too-many-requests":"Too many attempts. Try again later."
+      };
+      setAuthGateMessage(messages[error.code] || error.message || "Sign-in failed.");
+    } finally {
+      submit.disabled = false;
+      toggle.disabled = false;
+      forgot.disabled = false;
+      submit.textContent = mode === "signup" ? "Create account" : "Sign in";
+    }
+  });
+
+  forgot.addEventListener("click", async () => {
+    const email = $("authGateEmail").value.trim();
+    if (!email) {
+      setAuthGateMessage("Enter your email address first.");
+      $("authGateEmail").focus();
+      return;
+    }
+    try {
+      await auth.sendPasswordResetEmail(email);
+      setAuthGateMessage("If the account exists, a password-reset email has been sent.", true);
+    } catch (error) {
+      setAuthGateMessage(error.message || "Could not send password-reset email.");
+    }
+  });
+
+  auth.onAuthStateChanged(user => {
+    currentUser = user || null;
+    document.body.classList.toggle("auth-required", !user);
+    $("authGate").hidden = !!user;
+    if (user) {
+      const name = user.displayName || user.email || "Student";
+      $("profileName").textContent = name;
+      $("helloText").textContent = "Hello, " + name.split(" ")[0] + "! 👋";
+      $("avatar").textContent = name[0].toUpperCase();
+      setAuthGateMessage("");
+    } else {
+      password.value = "";
+    }
+  });
+}
 
 function init() {
   restoreLocal();
+  applySettingsAppearance();
   renderSubjects();
   renderRecentMaterials();
   renderMaterials();
@@ -2101,67 +2377,42 @@ function init() {
   renderNotes();
   renderProgress();
 
-  // Use Firebase Auth if its configuration has been filled in.
-  if (firebaseConfig.apiKey.startsWith("AIza") && firebaseConfig.appId.startsWith("1:")) {
-    const script = document.createElement("script");
-    script.src = "https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js";
-    script.onload = () => {
-      const authScript = document.createElement("script");
-      authScript.src = "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js";
-      authScript.onload = () => {
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        firebase.auth().onAuthStateChanged(user => {
-          currentUser = user;
-          if (user) {
-            sessionStorage.removeItem("classconnect_signed_out");
-            document.body.classList.remove("signed-out");
-            $("signedOutGate").hidden = true;
-            const name = user.displayName || user.email || "Student";
-            $("profileName").textContent = name;
-            $("helloText").textContent = "Hello, " + name.split(" ")[0] + "! 👋";
-            $("avatar").textContent = name[0].toUpperCase();
-          } else if (sessionStorage.getItem("classconnect_signed_out") === "1") {
-            document.body.classList.add("signed-out");
-            $("signedOutGate").hidden = false;
+  if (!firebaseConfig.apiKey.startsWith("AIza") || !firebaseConfig.appId.startsWith("1:")) {
+    setAuthGateMessage("Firebase configuration is missing. Add your valid Firebase web config.");
+    return;
+  }
+
+  const appScript = document.createElement("script");
+  appScript.src = "https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js";
+  appScript.onload = () => {
+    const authScript = document.createElement("script");
+    authScript.src = "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js";
+    authScript.onload = () => {
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      initAuthGate(firebase.auth());
+      const logoutButton = $("logoutBtn");
+      if (logoutButton) {
+        logoutButton.addEventListener("click", async () => {
+          logoutButton.disabled = true;
+          try {
+            await firebase.auth().signOut();
+            // onAuthStateChanged will hide the dashboard and show the sign-in screen.
+            setAuthGateMessage("You have been signed out.", true);
+          } catch (error) {
+            console.error("ClassConnect logout error:", error);
+            toast("Logout failed: " + (error.message || "Please try again."));
+          } finally {
+            logoutButton.disabled = false;
           }
         });
-      };
-      document.head.appendChild(authScript);
+      }
     };
-    document.head.appendChild(script);
-  }
+    authScript.onerror = () => setAuthGateMessage("Firebase Auth could not load. Check your internet connection.");
+    document.head.appendChild(authScript);
+  };
+  appScript.onerror = () => setAuthGateMessage("Firebase could not load. Check your internet connection.");
+  document.head.appendChild(appScript);
 }
-
-// Sign out through Firebase, then show a real sign-in gate instead of leaving the dashboard open.
-$("logoutBtn")?.addEventListener("click", async () => {
-  const button = $("logoutBtn");
-  if (!window.firebase?.auth) { toast("Firebase Auth is not ready. Refresh the page and try again."); return; }
-  button.disabled = true;
-  try {
-    await firebase.auth().signOut();
-    sessionStorage.setItem("classconnect_signed_out", "1");
-    document.body.classList.add("signed-out");
-    $("signedOutGate").hidden = false;
-    $("authGateError").textContent = "";
-  } catch (error) {
-    console.error("Logout failed:", error);
-    toast("Logout failed: " + (error.message || "Please try again."));
-  } finally { button.disabled = false; }
-});
-
-$("reloginForm")?.addEventListener("submit", async event => {
-  event.preventDefault();
-  $("authGateError").textContent = "";
-  try {
-    await firebase.auth().signInWithEmailAndPassword($("reloginEmail").value.trim(), $("reloginPassword").value);
-  } catch (error) { $("authGateError").textContent = error.message || "Could not sign in."; }
-});
-
-$("googleReloginBtn")?.addEventListener("click", async () => {
-  $("authGateError").textContent = "";
-  try { await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
-  catch (error) { $("authGateError").textContent = error.message || "Google sign-in failed."; }
-});
 
 init();
 
@@ -2203,9 +2454,10 @@ function materialCounts(subjectName){
 function makeSubjectCard(subject){
   const counts=materialCounts(subject.name);
   const card=document.createElement("article");
-  card.className="subject-card glass";card.tabIndex=0;card.setAttribute("role","button");card.setAttribute("aria-label","Open "+subject.name+" folder");
-  card.innerHTML=`<div class="subject-top"><div class="subject-icon" style="background:${subject.color};color:${subject.ink}"><i class="fa-solid ${subject.icon}"></i></div><div style="flex:1;min-width:0"><div class="subject-name">${escapeHTML(subject.name)}</div><div class="subject-code">${escapeHTML(subject.code||"Google Classroom course")}</div><div class="subject-counts"><span>${counts.total} materials</span><span class="completed">${counts.done} done</span><span class="remaining">${counts.pending} remaining</span></div></div><i class="fa-solid fa-chevron-right" style="color:#9db8ed"></i></div><div class="subject-bottom"><span class="muted">Open folder on dashboard</span><div class="file-badges"><span class="file-badge"><i class="fa-solid fa-file-pdf"></i></span><span class="file-badge"><i class="fa-solid fa-file-lines"></i></span><span class="file-badge"><i class="fa-solid fa-link"></i></span></div></div>`;
-  const open=()=>openDashboardSubjectFolder(subject);
+  card.className="subject-card glass";
+  card.tabIndex=0;card.setAttribute("role","button");card.setAttribute("aria-label","Open "+subject.name+" folder");
+  card.innerHTML=`<div class="subject-top"><div class="subject-icon" style="background:${subject.color};color:${subject.ink}"><i class="fa-solid ${subject.icon}"></i></div><div style="flex:1;min-width:0"><div class="subject-name">${escapeHTML(subject.name)}</div><div class="subject-code">${escapeHTML(subject.code||"Classroom course")}</div><div class="subject-counts"><span>${counts.total} materials</span><span class="completed">${counts.done} done</span><span class="remaining">${counts.pending} remaining</span></div></div><i class="fa-solid fa-chevron-right" style="color:#9db8ed"></i></div><div class="subject-bottom"><span class="muted">Open subject folder</span><div class="file-badges"><span class="file-badge"><i class="fa-solid fa-file-pdf"></i></span><span class="file-badge"><i class="fa-solid fa-file-lines"></i></span><span class="file-badge"><i class="fa-solid fa-link"></i></span></div></div>`;
+  const open=()=>{selectedSubject=subject.name;$('materialHeading').textContent=subject.name+" — Study Materials";$('materialSearch').value="";$('materialFilter').value="all";renderMaterials();showPage("materials")};
   card.addEventListener("click",open);card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}});return card;
 }
 
@@ -2215,35 +2467,6 @@ function renderSubjects(){
   subjects.forEach(s=>all.appendChild(makeSubjectCard(s)));
   ["assignmentSubject","taskSubject","noteSubject"].forEach(id=>{const select=$(id);if(!select)return;const previous=select.value;select.innerHTML=subjects.map(s=>`<option value="${escapeHTML(s.name)}">${escapeHTML(s.name)}</option>`).join("");if(previous)select.value=previous;});
 }
-
-function openDashboardSubjectFolder(subject){
-  selectedSubject=subject.name;
-  const panel=$("dashboardSubjectFolder");
-  $("dashboardFolderTitle").textContent=subject.name;
-  $("dashboardFolderSearch").value="";
-  $("dashboardFolderFilter").value="all";
-  renderDashboardSubjectFolder();
-  panel.hidden=false;
-  panel.scrollIntoView({behavior:"smooth",block:"start"});
-}
-
-function renderDashboardSubjectFolder(){
-  const name=selectedSubject;
-  const list=materials.filter(m=>m.subject===name);
-  const done=list.filter(isDone).length;
-  const pending=list.length-done;
-  $("dashboardFolderStats").textContent=`${list.length} materials · ${done} completed · ${pending} remaining`;
-  const query=($("dashboardFolderSearch").value||"").trim().toLowerCase();
-  const filter=$("dashboardFolderFilter").value;
-  const filtered=list.filter(m=>{const isCompleted=isDone(m);return (!query||[m.title,m.subject,m.type].some(v=>String(v||"").toLowerCase().includes(query)))&&(filter==="all"||(filter==="done"&&isCompleted)||(filter==="pending"&&!isCompleted));});
-  const container=$("dashboardFolderMaterials");container.replaceChildren();
-  if(!filtered.length){container.innerHTML=`<div class="empty"><i class="fa-regular fa-folder-open" style="font-size:28px"></i><p><b>${escapeHTML(name||"Subject folder")}</b></p><p>${list.length?"No materials match this filter.":(classroomConnected?"No materials were returned for this subject. Check whether your teacher shared files or attachments in Google Classroom.":"Connect Google Classroom and select Sync Now to load your actual course materials here.")}</p><button class="primary-btn" type="button" id="folderOpenClassroom">Open Google Classroom</button></div>`;$("folderOpenClassroom").onclick=()=>showPage("classroom");return;}
-  filtered.forEach(m=>{const row=document.createElement("div");row.className="material-row";const pdf=/pdf/i.test((m.title||"")+" "+(m.type||""));row.innerHTML=`<div class="file-icon" style="${pdf?'background:rgba(255,75,90,.13);color:#ff8b9a':''}"><i class="fa-solid ${pdf?'fa-file-pdf':'fa-file-lines'}"></i></div><div class="material-info"><h3>${escapeHTML(m.title||"Study material")}</h3><p>${escapeHTML(m.type||m.subject)} · <b style="color:${isDone(m)?'#7de8c2':'#ffd19a'}">${isDone(m)?'Done':'Pending'}</b></p></div><button class="small-btn folder-preview" type="button">Preview</button><button class="close-btn folder-done" type="button" aria-label="Mark ${isDone(m)?'pending':'done'}"><i class="fa-solid ${isDone(m)?'fa-check':'fa-circle'}"></i></button>`;row.querySelector(".folder-preview").onclick=()=>previewMaterial(m);row.querySelector(".folder-done").onclick=async()=>{await toggleMaterial(m);renderSubjects();renderDashboardSubjectFolder();};container.appendChild(row);});
-}
-
-$("closeDashboardFolder")?.addEventListener("click",()=>{selectedSubject=null;$("dashboardSubjectFolder").hidden=true;});
-$("dashboardFolderSearch")?.addEventListener("input",renderDashboardSubjectFolder);
-$("dashboardFolderFilter")?.addEventListener("change",renderDashboardSubjectFolder);
 
 function renderMaterials(){
   const query=(($("materialSearch")?.value)||($("globalSearch")?.value)||"").toLowerCase().trim();
@@ -2292,7 +2515,7 @@ async function loadClassroom(){
     if(!courses.length)courseBox.innerHTML='<div class="empty">No courses returned. Check Google Classroom connection and API permissions.</div>';
     const announcementBox=$("classroomAnnouncements");
     if(announcementBox){announcementBox.replaceChildren();announcements.forEach(item=>{const course=courseMap.get(String(item.courseId));const card=document.createElement('article');card.className='announcement-card';card.innerHTML=`<h3>${escapeHTML(item.text||item.title||"Classroom announcement")}</h3><p>${escapeHTML(item.description||item.body||"")}</p><small>${escapeHTML(course?.name||"Google Classroom")} · ${escapeHTML(formatDate(item.creationTime||item.updateTime||""))}</small>${item.alternateLink?`<p><a href="${escapeHTML(safeURL(item.alternateLink))}" target="_blank" rel="noopener noreferrer">Open in Classroom ↗</a></p>`:""}`;announcementBox.appendChild(card)});if(!announcements.length)announcementBox.innerHTML='<div class="empty">No announcements returned by the connected Classroom account.</div>';}
-    $("classroomStatus").textContent=`Synced ${courses.length} courses, ${coursework.length} assignments, ${courseMaterials.length} materials and ${announcements.length} announcements. If materials are missing, the backend must request Google Classroom courseWorkMaterials and required OAuth scopes.`;
+    $("classroomStatus").textContent=`Synced ${courses.length} courses, ${coursework.length} assignments, ${courseMaterials.length} materials and ${announcements.length} announcements. If materials are missing, the backend must fetch courseWorkMaterials and have the required Google OAuth scopes.`;
     saveLocal();renderSubjects();renderRecentMaterials();renderMaterials();renderAssignments();renderDashboardTasks();renderProgress();toast("Classroom data synced.");
   }catch(error){$("classroomStatus").textContent="Sync failed. Sign in, connect Google Classroom, then check that /api/classroom/data returns courses and courseWorkMaterials.";toast("Unable to sync Classroom data. Check sign-in and backend route.");}
 }
@@ -2313,7 +2536,83 @@ function previewMaterial(material){
 
 // Fix Google Classroom due-date objects so they never display as [object Object].
 
-</script>
 
+
+// AI Study Assistant — handler is attached directly because this script is at the end of the HTML.
+// preventDefault() runs immediately so the browser never performs a normal form refresh.
+(function initAIStudyAssistant() {
+  const form = document.getElementById("ai-chat-form");
+  const input = document.getElementById("ai-chat-input");
+  const messages = document.getElementById("ai-chat-messages");
+  const send = document.getElementById("ai-send-button");
+  if (!form || !input || !messages || !send) {
+    console.error("ClassConnect AI: chat elements are missing.");
+    return;
+  }
+  if (form.dataset.handlerAttached === "true") return;
+  form.dataset.handlerAttached = "true";
+
+  const addMessage = (text, role) => {
+    const node = document.createElement("div");
+    node.className = "ai-message " + role;
+    node.textContent = text;
+    messages.appendChild(node);
+    messages.scrollTop = messages.scrollHeight;
+    return node;
+  };
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const message = input.value.trim();
+    if (!message) return;
+    if (message.length > 4000) {
+      addMessage("Please keep your question under 4000 characters.", "error");
+      return;
+    }
+    const user = window.firebase && firebase.auth ? firebase.auth().currentUser : null;
+    if (!user) {
+      addMessage("You are signed out. Please sign in again to use the AI tutor.", "error");
+      return;
+    }
+
+    addMessage(message, "user");
+    input.value = "";
+    send.disabled = true;
+    send.textContent = "Thinking…";
+    const reply = addMessage("Thinking about your question…", "assistant");
+
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch("http://localhost:3000/api/ai/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ message })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "AI request failed (HTTP " + response.status + ").");
+      reply.textContent = data.reply || "The AI did not return an answer. Please try again.";
+    } catch (error) {
+      console.error("ClassConnect AI request failed:", error);
+      reply.classList.add("error");
+      if (error instanceof TypeError) {
+        reply.textContent = "Cannot reach the local AI server. Make sure server/index.js is running on port 3000.";
+      } else {
+        reply.textContent = "AI error: " + (error.message || "Please check the API key, quota, and backend logs.");
+      }
+    } finally {
+      send.disabled = false;
+      send.textContent = "Send";
+      input.focus();
+      messages.scrollTop = messages.scrollHeight;
+    }
+  });
+  console.log("ClassConnect AI form handler attached.");
+})();
+
+</script>
 </body>
 </html>

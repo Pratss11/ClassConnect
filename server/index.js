@@ -3,6 +3,9 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
+const fs = require("fs");
+const path = require("path");
+const { GoogleGenAI } = require("@google/genai");
 
 const {
   initializeApp,
@@ -61,15 +64,121 @@ console.log("Firebase Admin initialized successfully.");
 // =====================================================
 
 const app = express();
+// =====================================================
+// CLASSCONNECT AI STUDY ASSISTANT
+// =====================================================
+
+const ai = process.env.GEMINI_API_KEY
+  ? new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    })
+  : null;
+
+app.post(
+  "/api/ai/chat",
+  requireFirebaseUser,
+  async (req, res) => {
+    try {
+      if (!ai) {
+        return res.status(503).json({
+          error: "AI is not configured. Add GEMINI_API_KEY to server environment variables.",
+        });
+      }
+
+      const { message } = req.body || {};
+
+      if (
+        typeof message !== "string" ||
+        !message.trim() ||
+        message.length > 4000
+      ) {
+        return res.status(400).json({
+          error: "Enter a message of up to 4000 characters.",
+        });
+      }
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: message.trim(),
+        config: {
+          systemInstruction:
+            "You are ClassConnect AI, a helpful study assistant. Explain concepts clearly in simple English, use examples, and help students understand rather than simply memorize.",
+        },
+      });
+
+      return res.json({
+        reply: response.text || "I couldn't generate a response. Please try again.",
+      });
+    } catch (error) {
+      console.error("ClassConnect AI error:", error.message);
+
+      return res.status(502).json({
+        error: "AI request failed. Check the model, API key, quota, and server logs.",
+      });
+    }
+  }
+);
 
 const PORT = Number(process.env.PORT) || 3000;
 
-app.use(cors());
+app.use(cors({
+    origin: [
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
+        "https://class-connect-server-mocha.vercel.app"
+    ],
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 app.use(
   express.json({
     limit: "50kb",
   })
+);app.post(
+  "/api/ai/chat",
+  requireFirebaseUser,
+  async (req, res) => {
+    try {
+      if (!ai) {
+        return res.status(503).json({
+          error: "AI is not configured. Add GEMINI_API_KEY to server environment variables.",
+        });
+      }
+
+      const { message } = req.body || {};
+
+      if (
+        typeof message !== "string" ||
+        !message.trim() ||
+        message.length > 4000
+      ) {
+        return res.status(400).json({
+          error: "Enter a message of up to 4000 characters.",
+        });
+      }
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: message.trim(),
+        config: {
+          systemInstruction:
+            "You are ClassConnect AI, a helpful study assistant. Explain concepts clearly in simple English, use examples, and help students understand rather than simply memorize.",
+        },
+      });
+
+      return res.json({
+        reply: response.text || "I couldn't generate a response. Please try again.",
+      });
+    } catch (error) {
+  console.error("ClassConnect AI error:", error);
+  return res.status(502).json({
+    error: error.message || "AI request failed" 
+      });
+    }
+  }
 );
 
 // =====================================================
@@ -89,14 +198,25 @@ const dbConfig = {
 };
 
 if (process.env.DB_HOST) {
-  if (!process.env.DB_CA_CERT) {
+  let caCertificate = process.env.DB_CA_CERT;
+
+  if (process.env.DB_CA_CERT_PATH) {
+    const certificatePath = path.resolve(
+      __dirname,
+      process.env.DB_CA_CERT_PATH
+    );
+
+    caCertificate = fs.readFileSync(certificatePath, "utf8");
+  }
+
+  if (!caCertificate) {
     throw new Error(
-      "DB_CA_CERT is required when using the remote MySQL database."
+      "DB_CA_CERT or DB_CA_CERT_PATH is required for the remote MySQL database."
     );
   }
 
   dbConfig.ssl = {
-    ca: process.env.DB_CA_CERT.replace(/\\n/g, "\n"),
+    ca: caCertificate.replace(/\\n/g, "\n"),
     rejectUnauthorized: true,
   };
 }
